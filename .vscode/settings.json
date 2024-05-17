@@ -1,0 +1,49 @@
+{
+  "editor.acceptSuggestionOnEnter": "on",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit",
+    "source.addMissingImports": "explicit"
+  },
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  "editor.suggest.showMethods": true,
+  "editor.suggest.preview": true,
+  "eslint.format.enable": true,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "prettier.requireConfig": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "cSpell.words": [
+    "knip",
+    "storycap",
+    "testid"
+  ],
+}

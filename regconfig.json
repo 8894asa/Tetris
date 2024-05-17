@@ -1,0 +1,34 @@
+{
+  "core": {
+    "workingDir": ".reg",
+    "actualDir": "__screenshots__",
+    "thresholdRate": 0,
+    "addIgnore": true,
+    "ximgdiff": {
+      "invocationType": "client"
+    }
+  },
+  "plugins": {
+    "reg-simple-keygen-plugin": {
+      "expectedKey": "${EXPECTED_KEY}",
+      "actualKey": "${ACTUAL_KEY}"
+    },
+    "reg-notify-gitlab-plugin": {
+      "privateToken": "${GITLAB_PRIVATE_TOKEN}",
+      "commentTo": "note",
+      "projectId": "45362257"
+    },
+    "reg-publish-s3-plugin": {
+      "bucketName": "vrt-snapshots",
+      "acl": "private",
+      "customDomain": "d184nm57s92m8n.cloudfront.net",
+      "sdkOptions": {
+        "region": "${AWS_DEFAULT_REGION}",
+        "credentials": {
+          "accessKeyId": "${AWS_ACCESS_KEY_ID}",
+          "secretAccessKey": "${AWS_SECRET_ACCESS_KEY}"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "streetsidesoftware.code-spell-checker",
+        "dbaeumer.vscode-eslint",
+        "visualstudioexptteam.intellicode-api-usage-examples",
+        "bierner.markdown-mermaid",
+        "pkief.material-icon-theme",
+        "william-voyek.vscode-nginx",
+        "jock.svg",
+        "shardulm94.trailing-spaces"
+    ]
+}

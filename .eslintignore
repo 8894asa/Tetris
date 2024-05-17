@@ -1,0 +1,9 @@
+.eslintrc.cjs
+postcss.config.cjs
+tailwind.config.cjs
+vite.config.ts
+jest.config.cjs
+i18next-parser.config.js
+jest.polyfills.js
+jest.setup.js
+build
