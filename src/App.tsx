@@ -111,15 +111,19 @@ function App() {
   const [time, setTime] = useState(0);
   const dropInterval = 5;
   const [minoList, setMinoList] = useState<MinoType[]>(minoTypes.concat());
+  const minoListRef = useRef<MinoType[]>([]);
+  // キーイベントで最新のstateを参照するためにrefを使う
+  minoListRef.current = minoList;
   const getNextMinoType = () => {
-    if (minoList.length === 0) {
-      const newMinoType =
-        minoTypes.concat()[Math.floor(Math.random() * minoList.length)];
-      setMinoList(minoTypes.concat().filter((mino) => mino !== newMinoType));
-      return newMinoType;
+    const nextMino =
+      minoListRef.current[
+        Math.floor(Math.random() * minoListRef.current.length)
+      ];
+    if (minoListRef.current.length === 1) {
+      setMinoList(minoTypes.concat());
+    } else {
+      setMinoList(minoListRef.current.filter((mino) => mino !== nextMino));
     }
-    const nextMino = minoList[Math.floor(Math.random() * minoList.length)];
-    setMinoList(minoList.filter((mino) => mino !== nextMino));
     return nextMino;
   };
   const [currentMino, setCurrentMino] = useState<CurrentMino>(() => {
@@ -131,7 +135,6 @@ function App() {
       hasHold: false,
     };
   });
-  // キーイベントで最新のminoを参照するためにrefを使う
   const minoRef = useRef<CurrentMino>(null!);
   minoRef.current = currentMino;
   const [holdMino, setHoldMino] = useState<Tetrimino | undefined>(undefined);
@@ -357,9 +360,10 @@ function App() {
           if (!minoRef.current.hasHold) {
             if (holdMinoRef.current == null) {
               setHoldMino({ ...minoRef.current, rotation: 0 });
+              const nextMinoType = getNextMinoType();
               setCurrentMino({
-                position: getInitialPosition(getNextMinoType()),
-                type: getNextMinoType(),
+                position: getInitialPosition(nextMinoType),
+                type: nextMinoType,
                 rotation: 0,
                 hasHold: false,
               });
@@ -384,6 +388,7 @@ function App() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  console.log(minoList);
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="w-48 mr-4">
