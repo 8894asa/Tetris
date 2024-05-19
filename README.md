@@ -14,4 +14,4 @@
 
 ## コメント
 
-SRS(参照：https://tetrisch.github.io/main/srs.html)は時間が無く未実装
+SRS(参照：https://tetrisch.github.io/main/srs.html )は時間が無く未実装
