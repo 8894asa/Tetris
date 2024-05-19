@@ -131,6 +131,7 @@ function App() {
       hasHold: false,
     };
   });
+  // キーイベントで最新のminoを参照するためにrefを使う
   const minoRef = useRef<CurrentMino>(null!);
   minoRef.current = currentMino;
   const [holdMino, setHoldMino] = useState<Tetrimino | undefined>(undefined);
@@ -152,13 +153,13 @@ function App() {
   const canRotate = (mino: Tetrimino, isClockwise: boolean): boolean => {
     const rotatedBlocks = getMinoPositions({
       ...mino,
-      rotation: mino.rotation + (isClockwise ? 1 : -1),
+      rotation: mino.rotation + (isClockwise ? -1 : 1),
     });
     return !isStacked(rotatedBlocks);
   };
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    const handleChangeTime = () => {
       const newTime = time + 1;
       setTime(newTime);
 
@@ -170,7 +171,10 @@ function App() {
         ...currentMino,
         position: { ...currentMino.position, y: currentMino.position.y - 1 },
       };
+
+      // ミノが落下したら重なるか
       if (isStacked(getMinoPositions(droppedMino))) {
+        // フィールド上のブロックにcurrentMinoを加える
         setField((prev) =>
           prev.map((row, y) =>
             row.map((block, x) => {
@@ -197,7 +201,7 @@ function App() {
         const nextMinoType = getNextMinoType();
 
         // 負け判定
-        // 21段目にミノを置いたら負け
+        // 21段目にミノを置くか, 次のミノの出現位置にブロックがあると負け
         if (
           getMinoPositions(currentMino).reduce(
             (min, cur) => Math.min(min, cur.y),
@@ -206,6 +210,8 @@ function App() {
           isStacked([getInitialPosition(nextMinoType)])
         ) {
           alert("game over!");
+
+          // 初期化
           setField(newField());
           const newMinoType =
             minoTypes.concat()[Math.floor(Math.random() * minoTypes.length)];
@@ -221,18 +227,18 @@ function App() {
           return;
         }
 
-        // 次のミノをセット
-        setCurrentMino((prev) => ({
-          ...prev,
+        // ミノが設置されたので次のミノをcurrentMinoにセット
+        setCurrentMino({
           position: getInitialPosition(nextMinoType),
           type: nextMinoType,
           rotation: 0,
           hasHold: false,
-        }));
+        });
         return;
       }
       setCurrentMino(droppedMino);
-    }, 100);
+    };
+    const timer = setInterval(handleChangeTime, 100);
     return () => clearInterval(timer);
   });
 
@@ -316,9 +322,9 @@ function App() {
           ) {
             return;
           }
-          let j = 0;
+          let j = 20;
           while (
-            isStacked(
+            !isStacked(
               getMinoPositions({
                 ...minoRef.current,
                 position: {
@@ -329,13 +335,13 @@ function App() {
             )
           ) {
             // eslint-disable-next-line no-plusplus
-            j++;
+            j--;
           }
           setCurrentMino({
             ...minoRef.current,
             position: {
               ...minoRef.current.position,
-              y: j,
+              y: j + 1,
             },
           });
           break;
@@ -343,7 +349,7 @@ function App() {
         case " ": {
           if (!minoRef.current.hasHold) {
             if (holdMinoRef.current == null) {
-              setHoldMino(minoRef.current);
+              setHoldMino({ ...minoRef.current, rotation: 0 });
               setCurrentMino({
                 position: getInitialPosition(getNextMinoType()),
                 type: getNextMinoType(),
@@ -357,7 +363,7 @@ function App() {
                 position: getInitialPosition(holdMinoRef.current.type),
                 hasHold: true,
               });
-              setHoldMino(tmp);
+              setHoldMino({ ...tmp, rotation: 0 });
             }
           }
           break;
