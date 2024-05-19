@@ -245,6 +245,7 @@ function App() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
+        // 反時計回りに回転
         case "a": {
           if (canRotate(minoRef.current, false)) {
             setCurrentMino({
@@ -254,6 +255,7 @@ function App() {
           }
           break;
         }
+        // 時計回りに回転
         case "d": {
           if (canRotate(minoRef.current, true)) {
             setCurrentMino({
@@ -263,6 +265,7 @@ function App() {
           }
           break;
         }
+        // 左に移動
         case "ArrowLeft": {
           const movedMino = {
             ...minoRef.current,
@@ -276,6 +279,7 @@ function App() {
           }
           break;
         }
+        // 右に移動
         case "ArrowRight": {
           const movedMino = {
             ...minoRef.current,
@@ -289,6 +293,7 @@ function App() {
           }
           break;
         }
+        // ソフトドロップ
         case "ArrowDown": {
           const droppedMino = {
             ...minoRef.current,
@@ -308,6 +313,7 @@ function App() {
           }
           break;
         }
+        // ハードドロップ
         case "ArrowUp": {
           if (
             isStacked(
@@ -346,6 +352,7 @@ function App() {
           });
           break;
         }
+        // ホールド
         case " ": {
           if (!minoRef.current.hasHold) {
             if (holdMinoRef.current == null) {
