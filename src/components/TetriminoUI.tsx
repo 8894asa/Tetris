@@ -1,28 +1,9 @@
 /* eslint-disable react/no-array-index-key */
 import { Block } from "@/components/Block";
-import { Tetrimino } from "@/domains/tetrimino";
+import { MinoType } from "@/domains/tetrimino";
 
 type Props = {
-  tetriMino?: Tetrimino;
-};
-
-// 時計まわりを正の方向とする
-const getRotateClassName = (rotation?: number) => {
-  if (rotation == null) {
-    return "";
-  }
-  switch (rotation % 4) {
-    case 0:
-      return "";
-    case 1:
-      return "rotate-90";
-    case 2:
-      return "rotate-180";
-    case 3:
-      return "-rotate-90";
-    default:
-      return "";
-  }
+  type?: MinoType;
 };
 
 function Imino() {
@@ -123,9 +104,9 @@ function Tmino() {
   );
 }
 
-export function TetriminoUI({ tetriMino }: Props) {
+export function TetriminoUI({ type }: Props) {
   const mino = () => {
-    switch (tetriMino?.type) {
+    switch (type) {
       case "I":
         return <Imino />;
       case "O":
@@ -144,7 +125,5 @@ export function TetriminoUI({ tetriMino }: Props) {
         return undefined;
     }
   };
-  return (
-    <div className={`${getRotateClassName(tetriMino?.rotation)}`}>{mino()}</div>
-  );
+  return <div>{mino()}</div>;
 }
