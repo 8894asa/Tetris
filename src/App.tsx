@@ -110,24 +110,46 @@ type CurrentMino = Tetrimino & { hasHold: boolean };
 function App() {
   const [time, setTime] = useState(0);
   const dropInterval = 5;
-  const [minoList, setMinoList] = useState<MinoType[]>(minoTypes.concat());
+
+  const [minoTypeList, setMinoTypeList] = useState<MinoType[]>(
+    minoTypes.concat(),
+  );
   const minoListRef = useRef<MinoType[]>([]);
   // キーイベントで最新のstateを参照するためにrefを使う
-  minoListRef.current = minoList;
-  const getNextMinoType = () => {
-    const nextMino =
+  minoListRef.current = minoTypeList;
+
+  const [nextMinoList, setNextMinoList] = useState<MinoType[]>([]);
+  const nextMinoListRef = useRef<MinoType[]>([]);
+  nextMinoListRef.current = nextMinoList;
+
+  const getNextMino = (): CurrentMino => {
+    // nextMinoListに追加するMinoTypeを抽選
+    const additionalType =
       minoListRef.current[
         Math.floor(Math.random() * minoListRef.current.length)
       ];
     if (minoListRef.current.length === 1) {
-      setMinoList(minoTypes.concat());
+      setMinoTypeList(minoTypes.concat());
     } else {
-      setMinoList(minoListRef.current.filter((mino) => mino !== nextMino));
+      setMinoTypeList(
+        minoListRef.current.filter((mino) => mino !== additionalType),
+      );
     }
-    return nextMino;
+
+    const nextType = nextMinoListRef.current[0];
+
+    setNextMinoList([...nextMinoListRef.current.slice(1), additionalType]);
+
+    return {
+      type: nextType,
+      position: getInitialPosition(nextType),
+      rotation: 0,
+      hasHold: false,
+    };
   };
+
   const [currentMino, setCurrentMino] = useState<CurrentMino>(() => {
-    const type = getNextMinoType();
+    const type = "I";
     return {
       position: getInitialPosition(type),
       type,
@@ -145,6 +167,43 @@ function App() {
   const fieldRef = useRef<FieldBlock[][]>(null!);
   fieldRef.current = field;
 
+  // 初期化用関数
+  const initialize = () => {
+    const currentMinoType =
+      minoTypes.concat()[Math.floor(Math.random() * minoTypes.length)];
+
+    // 5つ先まで抽選
+    const nextMinoTypes: MinoType[] = [];
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < 5; i++) {
+      const m = Math.floor(Math.random() * (minoTypes.length - 1 - i));
+      const a = minoTypes
+        .concat()
+        .filter((type) => type !== currentMinoType)
+        .filter((type) => !nextMinoTypes.some((nextType) => type === nextType))[
+        m
+      ];
+      nextMinoTypes.push(a);
+    }
+    setNextMinoList(nextMinoTypes);
+
+    setCurrentMino({
+      type: currentMinoType,
+      position: getInitialPosition(currentMinoType),
+      rotation: 0,
+      hasHold: false,
+    });
+
+    setMinoTypeList(
+      minoTypes
+        .concat()
+        .filter((type) => type !== currentMinoType)
+        .filter((type) => !nextMinoTypes.some((nextType) => type === nextType)),
+    );
+
+    setField(newField());
+  };
+
   const isStacked = (blocks: Position[]): boolean =>
     blocks.some((block) => {
       const { x, y } = block;
@@ -160,6 +219,10 @@ function App() {
     });
     return !isStacked(rotatedBlocks);
   };
+
+  useEffect(() => {
+    initialize();
+  }, []);
 
   useEffect(() => {
     const handleChangeTime = () => {
@@ -201,7 +264,7 @@ function App() {
           ].slice(0, 24),
         );
 
-        const nextMinoType = getNextMinoType();
+        const nextMino = getNextMino();
 
         // 負け判定
         // 21段目にミノを置くか, 次のミノの出現位置にブロックがあると負け
@@ -210,33 +273,16 @@ function App() {
             (min, cur) => Math.min(min, cur.y),
             24,
           ) >= 21 ||
-          isStacked([getInitialPosition(nextMinoType)])
+          isStacked([getInitialPosition(nextMino.type)])
         ) {
           alert("game over!");
 
-          // 初期化
-          setField(newField());
-          const newMinoType =
-            minoTypes.concat()[Math.floor(Math.random() * minoTypes.length)];
-          setMinoList(
-            minoTypes.concat().filter((mino) => mino !== newMinoType),
-          );
-          setCurrentMino({
-            position: getInitialPosition(newMinoType),
-            type: newMinoType,
-            rotation: 0,
-            hasHold: false,
-          });
+          initialize();
           return;
         }
 
         // ミノが設置されたので次のミノをcurrentMinoにセット
-        setCurrentMino({
-          position: getInitialPosition(nextMinoType),
-          type: nextMinoType,
-          rotation: 0,
-          hasHold: false,
-        });
+        setCurrentMino(nextMino);
         return;
       }
       setCurrentMino(droppedMino);
@@ -360,13 +406,7 @@ function App() {
           if (!minoRef.current.hasHold) {
             if (holdMinoRef.current == null) {
               setHoldMino({ ...minoRef.current, rotation: 0 });
-              const nextMinoType = getNextMinoType();
-              setCurrentMino({
-                position: getInitialPosition(nextMinoType),
-                type: nextMinoType,
-                rotation: 0,
-                hasHold: false,
-              });
+              setCurrentMino(getNextMino());
             } else {
               const tmp = minoRef.current;
               setCurrentMino({
@@ -388,13 +428,15 @@ function App() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  console.log(minoList);
+  console.log(nextMinoList);
+  console.log(minoTypeList);
+
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex gap-4 justify-center items-center h-screen">
       <div className="w-48 mr-4">
         Hold
         <div className="mt-8 h-24">
-          <TetriminoUI tetriMino={holdMino} />
+          <TetriminoUI type={holdMino?.type} />
         </div>
         <div className="mt-8">
           A, Dで回転
@@ -413,6 +455,15 @@ function App() {
         minoPositions={getMinoPositions(currentMino)}
         minoType={currentMino.type}
       />
+      <div className="flex-col flex justify-center gap-4 w-32">
+        <div className="text-center">NEXT</div>
+        {nextMinoList.map((nextMino, i) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <div className="text-center" key={i}>
+            <TetriminoUI type={nextMino} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
