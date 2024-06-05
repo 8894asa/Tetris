@@ -11,12 +11,28 @@ export type FieldBlock = {
   type?: MinoType;
 };
 
+export type FieldData = {
+  position: Position;
+  type: MinoType;
+};
+
 export const newFieldBlock = (): FieldBlock => ({
   isFilled: false,
 });
 
-export const newField = (): FieldBlock[][] =>
+export const newEmptyField = (): FieldBlock[][] =>
   Array.from({ length: 24 }, () => Array.from({ length: 10 }, newFieldBlock));
+
+export const newField = (filledData: FieldData[]): FieldBlock[][] => {
+  const field = newEmptyField();
+  filledData.forEach((data) => {
+    field[data.position.y][data.position.x] = {
+      isFilled: true,
+      type: data.type,
+    };
+  });
+  return field;
+};
 
 export type Tetrimino = {
   type: MinoType;

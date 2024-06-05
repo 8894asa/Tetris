@@ -2,10 +2,14 @@
 import { Block } from "@/components/Block";
 import { FieldBlock, MinoType, Position } from "@/domains/tetrimino";
 
+type MinoInField = {
+  positions: Position[];
+  type: MinoType;
+};
+
 type Props = {
   field: FieldBlock[][];
-  minoPositions: Position[];
-  minoType: MinoType;
+  mino: MinoInField;
 };
 
 const classNameFromType = (type?: string) => {
@@ -29,7 +33,7 @@ const classNameFromType = (type?: string) => {
   }
 };
 
-export function Field({ field, minoPositions, minoType }: Props) {
+export function Field({ field, mino }: Props) {
   return (
     <div className="flex-col">
       {field
@@ -38,13 +42,13 @@ export function Field({ field, minoPositions, minoType }: Props) {
         .map((row, y) => (
           <div key={y} className="flex">
             {row.map((block, x) => {
-              const mino = minoPositions.find(
+              const minoBlock = mino.positions.find(
                 // reverseしたので19 - position.y
                 (position) => position.x === x && 19 - position.y === y,
               );
-              if (mino != null) {
+              if (minoBlock != null) {
                 return (
-                  <Block key={x} className={classNameFromType(minoType)} />
+                  <Block key={x} className={classNameFromType(mino.type)} />
                 );
               }
               return (
