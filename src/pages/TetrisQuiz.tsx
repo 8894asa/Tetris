@@ -2,76 +2,42 @@
 import { Field } from "@/components/Field";
 import { FieldFrame } from "@/components/FieldFrame";
 import { useTetrisGame } from "@/components/TetrisGameHook";
+import type { Question } from "@/const/questions";
 import {
   FieldBlock,
   FieldData,
-  MinoType,
   getInitialPosition,
   minoTypes,
   newField,
 } from "@/domains/tetrimino";
 
-export function TetrisQuiz() {
+type Props = {
+  question: Question;
+};
+
+export function TetrisQuiz({ question }: Props) {
+  // クイズの初期フィールドのミノ配置
   const getFieldData = (): FieldData[] => {
     const fieldData: FieldData[] = [];
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 10; j++) {
-        switch (i) {
-          case 0:
-            if (j !== 4 && j !== 5) {
-              fieldData.push({
-                position: { x: j, y: i },
-                type: "I",
-              });
-            }
-            break;
-          case 1:
-            if (j !== 6) {
-              fieldData.push({
-                position: { x: j, y: i },
-                type: "I",
-              });
-            }
-            break;
-          case 2:
-            if (j !== 5 && j !== 6) {
-              fieldData.push({
-                position: { x: j, y: i },
-                type: "I",
-              });
-            }
-            break;
-          case 3:
-            if (j !== 4 && j !== 5 && j !== 6) {
-              fieldData.push({
-                position: { x: j, y: i },
-                type: "I",
-              });
-            }
-            break;
-          default:
-            return fieldData;
+    const { initialMinoGrid } = question;
+
+    for (let y = 0; y < initialMinoGrid.length; y++) {
+      for (let x = 0; x < initialMinoGrid[y].length; x++) {
+        if (initialMinoGrid[y][x] === 1) {
+          fieldData.push({
+            position: { x, y: initialMinoGrid.length - 1 - y }, // yの値を逆転させる
+            type: "I",
+          });
         }
       }
     }
     return fieldData;
   };
+
   // 初期化用関数
   const initialize = () => {
-    const currentMinoType: MinoType = "T";
-
-    // 5つ先まで抽選
-    const nextMinoList: MinoType[] = ["O"];
-    // eslint-disable-next-line no-plusplus
-    for (let i = 1; i < 5; i++) {
-      const minoIndex = Math.floor(Math.random() * (minoTypes.length - 1 - i));
-      const nextMinoType = minoTypes
-        .filter((type) => type !== currentMinoType)
-        .filter((type) => !nextMinoList.some((nextType) => type === nextType))[
-        minoIndex
-      ];
-      nextMinoList.push(nextMinoType);
-    }
+    // 最初のミノの種類,次の5つ先までのミノの種類
+    const { currentMinoType, nextMinoList } = question;
 
     const currentMino = {
       type: currentMinoType,
@@ -80,6 +46,7 @@ export function TetrisQuiz() {
       hasHold: false,
     };
 
+    // 現在と次のミノを除く、ミノタイプのリストを作成。ミノの種類を１周期で考えたいので
     const minoTypeList = minoTypes
       .filter((type) => type !== currentMinoType)
       .filter((type) => !nextMinoList.some((nextType) => type === nextType));
@@ -93,10 +60,8 @@ export function TetrisQuiz() {
     };
   };
 
-  const judgeClear = (field: FieldBlock[][]) => {
-    console.log(field);
-    return !field.some((row) => row.some((block) => block.isFilled));
-  };
+  const judgeClear = (field: FieldBlock[][]) =>
+    !field.some((row) => row.some((block) => block.isFilled));
 
   const { field, currentMino, currentMinoPositions, holdMino, nextMinoList } =
     useTetrisGame(initialize, { judgeClear });
