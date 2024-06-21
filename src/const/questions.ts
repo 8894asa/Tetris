@@ -2,6 +2,8 @@
 
 import { MinoType } from "@/domains/tetrimino";
 
+// クイズの問題データを定義する
+
 // @id 問題のID
 // @difficulty 難易度
 // @name 名前
