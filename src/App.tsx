@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { url } from "@/const/url";
 import { MainGame } from "@/pages/MainGame";
 import { Menu } from "@/pages/Menu";
 import { TetrisQuiz } from "@/pages/TetrisQuiz";
-import { url } from "@/url";
 
 function App() {
   return (
