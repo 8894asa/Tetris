@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 
+import { QUESTIONS } from "@/const/questions";
 import { url } from "@/const/url";
 
 export function Menu() {
@@ -13,12 +14,15 @@ export function Menu() {
         >
           ゲーム
         </Link>
-        <Link
-          className="border py-4 px-8 border-gray-500 w-fit rounded-md mx-auto"
-          to={url.tetrisQuiz}
-        >
-          クイズ
-        </Link>
+        {QUESTIONS.map((question) => (
+          <Link
+            key={question.id}
+            className="border py-4 px-8 border-gray-500 w-fit rounded-md mx-auto"
+            to={`${url.tetrisQuiz}/${question.id}`}
+          >
+            クイズ{question.difficulty}
+          </Link>
+        ))}
       </div>
     </div>
   );

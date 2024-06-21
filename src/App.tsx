@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { QUESTIONS } from "@/const/questions";
 import { url } from "@/const/url";
 import { MainGame } from "@/pages/MainGame";
 import { Menu } from "@/pages/Menu";
@@ -11,7 +12,15 @@ function App() {
       <Routes>
         <Route path={url.menu} element={<Menu />} />
         <Route path={url.mainGame} element={<MainGame />} />
-        <Route path={url.tetrisQuiz} element={<TetrisQuiz />} />
+
+        {/* クイズのページ */}
+        {QUESTIONS.map((question) => (
+          <Route
+            key={question.id}
+            path={`${url.tetrisQuiz}/${question.id}`}
+            element={<TetrisQuiz question={question} />}
+          />
+        ))}
       </Routes>
     </BrowserRouter>
   );
