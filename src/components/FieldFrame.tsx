@@ -2,8 +2,8 @@ import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import { TetriminoUI } from "@/components/TetriminoUI";
+import { url } from "@/const/url";
 import { MinoType } from "@/domains/tetrimino";
-import { url } from "@/url";
 
 type Props = {
   children: ReactNode;

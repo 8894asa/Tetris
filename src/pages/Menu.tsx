@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { url } from "@/url";
+import { url } from "@/const/url";
 
 export function Menu() {
   return (
