@@ -32,6 +32,8 @@ export function FieldFrame({ children, holdMinoType, nextMinoList }: Props) {
           ↓でソフトドロップ
           <br />
           spaceでホールド
+          <br />
+          Zで一手戻る
         </div>
       </div>
       {children}

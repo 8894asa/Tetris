@@ -56,6 +56,8 @@ export function TetrisQuiz({ question }: Props) {
       currentMino,
       nextMinoList,
       holdMino: undefined,
+      formerMino: [],
+      formerField: [],
       minoTypeList,
     };
   };
