@@ -4,6 +4,8 @@ import { QUESTIONS } from "@/const/questions";
 import { url } from "@/const/url";
 import { MainGame } from "@/pages/MainGame";
 import { Menu } from "@/pages/Menu";
+import { ThreeButtons } from "@/pages/QuizEntrance";
+import { SelectStage } from "@/pages/SelectStage";
 import { TetrisQuiz } from "@/pages/TetrisQuiz";
 
 function App() {
@@ -12,6 +14,8 @@ function App() {
       <Routes>
         <Route path={url.menu} element={<Menu />} />
         <Route path={url.mainGame} element={<MainGame />} />
+        <Route path={url.QuizEntrance} element={<ThreeButtons />} />
+        <Route path={url.selectstage} element={<SelectStage />} />
 
         {/* クイズのページ */}
         {QUESTIONS.map((question) => (

@@ -88,4 +88,235 @@ export const QUESTIONS: Question[] = [
       },
     ],
   },
+  {
+    id: 3,
+    difficulty: "medium",
+    name: "中クラス問題",
+    description: "中クラス問題です。",
+    initialMinoGrid: [
+      [1, 0, 1, 1, 0, 0, 0, 1, 1, 1], // 4行目
+      [1, 1, 1, 1, 1, 0, 0, 1, 1, 1], // 3行目
+      [1, 1, 1, 1, 1, 1, 0, 1, 1, 1], // 2行目
+      [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "I",
+    nextMinoList: ["O", "I", "J", "L", "S"],
+    // TODO 後で考える。
+    answer: [
+      {
+        position: { x: 1, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+    ],
+  },
+  {
+    id: 4,
+    difficulty: "medium",
+    name: "中クラス問題",
+    description: "中クラス問題です。",
+    initialMinoGrid: [
+      [1, 1, 0, 1, 0, 0, 0, 1, 1, 1], // 4行目
+      [1, 1, 1, 1, 1, 0, 0, 1, 1, 1], // 3行目
+      [1, 1, 1, 1, 1, 1, 0, 1, 1, 1], // 2行目
+      [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "I",
+    nextMinoList: ["O", "I", "J", "L", "S"],
+    // TODO 後で考える。
+    answer: [
+      {
+        position: { x: 1, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+    ],
+  },
+  {
+    id: 5,
+    difficulty: "medium",
+    name: "中クラス問題",
+    description: "中クラス問題です。",
+    initialMinoGrid: [
+      [1, 1, 1, 0, 0, 0, 0, 1, 1, 1], // 4行目
+      [1, 1, 1, 1, 1, 0, 0, 1, 1, 1], // 3行目
+      [1, 1, 1, 1, 1, 1, 0, 1, 1, 1], // 2行目
+      [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "I",
+    nextMinoList: ["O", "I", "J", "L", "S"],
+    // TODO 後で考える。
+    answer: [
+      {
+        position: { x: 1, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+    ],
+  },
+  {
+    id: 6,
+    difficulty: "medium",
+    name: "中クラス問題",
+    description: "中クラス問題です。",
+    initialMinoGrid: [
+      [1, 1, 1, 1, 0, 0, 0, 0, 1, 1], // 4行目
+      [1, 1, 1, 1, 1, 0, 0, 1, 1, 1], // 3行目
+      [1, 1, 1, 1, 1, 1, 0, 1, 1, 1], // 2行目
+      [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "I",
+    nextMinoList: ["O", "I", "J", "L", "S"],
+    // TODO 後で考える。
+    answer: [
+      {
+        position: { x: 1, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+    ],
+  },
+  {
+    id: 7,
+    difficulty: "medium",
+    name: "中クラス問題",
+    description: "中クラス問題です。",
+    initialMinoGrid: [
+      [1, 1, 1, 1, 0, 0, 0, 1, 0, 1], // 4行目
+      [1, 1, 1, 1, 1, 0, 0, 1, 1, 1], // 3行目
+      [1, 1, 1, 1, 1, 1, 0, 1, 1, 1], // 2行目
+      [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "I",
+    nextMinoList: ["O", "I", "J", "L", "S"],
+    // TODO 後で考える。
+    answer: [
+      {
+        position: { x: 1, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+    ],
+  },
+   {
+    id: 8,
+    difficulty: "medium",
+    name: "中クラス問題",
+    description: "中クラス問題です。",
+    initialMinoGrid: [
+      [1, 1, 1, 1, 0, 0, 0, 1, 1, 0], // 4行目
+      [1, 1, 1, 1, 1, 0, 0, 1, 1, 1], // 3行目
+      [1, 1, 1, 1, 1, 1, 0, 1, 1, 1], // 2行目
+      [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "I",
+    nextMinoList: ["O", "I", "J", "L", "S"],
+    // TODO 後で考える。
+    answer: [
+      {
+        position: { x: 1, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+    ],
+  },
+  {
+    id: 9,
+    difficulty: "medium",
+    name: "中クラス問題",
+    description: "中クラス問題です。",
+    initialMinoGrid: [
+      [1, 1, 1, 1, 0, 0, 0, 1, 1, 1], // 4行目
+      [1, 1, 1, 1, 1, 0, 0, 1, 1, 1], // 3行目
+      [1, 1, 1, 1, 1, 1, 0, 1, 1, 1], // 2行目
+      [0, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "I",
+    nextMinoList: ["O", "I", "J", "L", "S"],
+    // TODO 後で考える。
+    answer: [
+      {
+        position: { x: 1, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+      {
+        position: { x: 0, y: 0 },
+        rotation: 0,
+      },
+    ],
+  },
 ];
