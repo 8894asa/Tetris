@@ -43,8 +43,8 @@ export function MainGame() {
       currentMino,
       nextMinoList,
       holdMino: undefined,
-      formerMino: [],
-      formerField: [],
+      formerMinos: [],
+      formerFields: [],
       minoTypeList,
     };
   };
