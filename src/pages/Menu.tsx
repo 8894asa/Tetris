@@ -15,7 +15,7 @@ export function Menu() {
         </Link>
         <Link
           className="border py-4 px-8 border-gray-500 w-fit rounded-md mx-auto"
-          to={url.QuizEntrance}
+          to={url.quizEntrance}
         >
           クイズ
         </Link>
