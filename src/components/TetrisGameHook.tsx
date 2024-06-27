@@ -17,6 +17,7 @@ type TetrisGameHookType = {
   currentMino: CurrentMino;
   currentMinoPositions: Position[];
   holdMino: Tetrimino | undefined;
+  formerMinos: MinoType[];
   nextMinoList: MinoType[];
 };
 
@@ -136,6 +137,8 @@ export function useTetrisGame(
     field: FieldBlock[][];
     currentMino: CurrentMino;
     holdMino: Tetrimino | undefined;
+    formerMinos: MinoType[];
+    formerFields: FieldBlock[][][];
     minoTypeList: MinoType[];
     nextMinoList: MinoType[];
   },
@@ -198,17 +201,31 @@ export function useTetrisGame(
   const holdMinoRef = useRef<Tetrimino | undefined>(undefined);
   holdMinoRef.current = holdMino;
 
+  const [formerMinos, setFormerMinos] = useState<MinoType[]>([]);
+  const formerMinosRef = useRef<MinoType[]>([]);
+  formerMinosRef.current = formerMinos;
+
   const [field, setField] = useState(newEmptyField());
   const fieldRef = useRef<FieldBlock[][]>(null!);
   fieldRef.current = field;
+
+  const formerFields = useRef<FieldBlock[][][]>([]);
+
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const isDeletingRef = useRef<boolean>(false);
+  isDeletingRef.current = isDeleting;
+
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
 
   const setInitValue = () => {
     const init = initialize();
     setField(init.field);
     setCurrentMino(init.currentMino);
     setHoldMino(init.holdMino);
+    setFormerMinos(init.formerMinos);
     setMinoTypeList(init.minoTypeList);
     setNextMinoList(init.nextMinoList);
+    formerFields.current = [];
   };
 
   useEffect(() => {
@@ -235,6 +252,16 @@ export function useTetrisGame(
         ...currentMino,
         position: { ...currentMino.position, y: currentMino.position.y - 1 },
       };
+      // 一手戻すためにformerMinosにセット
+      const currentTypeCopy = currentMino.type;
+      if (formerMinosRef.current == null) {
+        setFormerMinos([currentTypeCopy]);
+      } else {
+        const formerLength = formerMinosRef.current.length;
+        if (formerMinosRef.current[formerLength - 1] !== currentTypeCopy) {
+          formerMinosRef.current.push(currentTypeCopy);
+        }
+      }
 
       // ミノが落下したら重なるか
       if (isStacked(getMinoPositions(droppedMino), fieldRef.current)) {
@@ -253,6 +280,12 @@ export function useTetrisGame(
         );
         setField(fieldRef.current);
 
+        // 一手戻すためにfieldをformerFieldsにセット
+        const currentField = JSON.parse(JSON.stringify(fieldRef.current));
+        formerFields.current.push(currentField);
+
+        // 削除判定中フラグをセット
+        setIsDeleting(true);
         // ラインが埋まっていれば消す
         fieldRef.current = [
           ...fieldRef.current.filter((row) =>
@@ -261,6 +294,8 @@ export function useTetrisGame(
           ...newEmptyField(),
         ].slice(0, 24);
         setField(fieldRef.current);
+        // 削除判定中フラグを解除
+        setIsDeleting(false);
 
         const nextMino = getNextMino();
 
@@ -419,6 +454,98 @@ export function useTetrisGame(
           }
           break;
         }
+        // 一手戻す
+        case "z": {
+          if (isDeletingRef.current || buttonDisabled) {
+            return;
+          }
+          // if (isDeletingRef.current === false && !buttonDisabled) {
+          // zボタンの連続無効化
+          setButtonDisabled(true);
+
+          if (formerMinosRef != null) {
+            // フィールド上から直前のMinoを消す
+            const formerMinosLength = formerMinosRef.current.length;
+            if (formerMinosLength !== 0) {
+              const tmp = minoRef.current;
+              const init = initialize();
+              const formerFieldsLength = formerFields.current.length;
+              if (formerFieldsLength === 1 || formerFields.current == null) {
+                // Fieldの初期化
+                setField(init.field);
+                formerFields.current.length = 0;
+              }
+              if (formerFieldsLength >= 2) {
+                const formerNum = formerFieldsLength - 2;
+                const fieldTmp = formerFields.current[formerNum];
+                formerFields.current.pop();
+                setField(fieldTmp);
+              }
+
+              if (formerMinosLength === 1 || formerMinosLength == null) {
+                // MinoTypeの初期化
+                formerMinosRef.current.length = 0;
+                setFormerMinos([]);
+                setCurrentMino(init.currentMino);
+                setNextMinoList(init.nextMinoList);
+              }
+              if (formerMinosLength >= 2) {
+                const lastNum = formerMinosLength - 1;
+
+                if (formerMinosRef.current[lastNum] !== tmp.type) {
+                  // tmpがformerMinosに格納されていない場合
+                  // tmpがformerMinosに格納されている場合
+                  const type = formerMinosRef.current[lastNum];
+                  const formerMino = {
+                    position: getInitialPosition(type),
+                    type,
+                    rotation: 0,
+                    hasHold: false,
+                    hasUndone: false,
+                  };
+                  setCurrentMino({
+                    ...formerMino,
+                    position: getInitialPosition(
+                      formerMinosRef.current[lastNum],
+                    ),
+                    hasHold: false,
+                  });
+                  setNextMinoList(
+                    [tmp.type, ...nextMinoListRef.current].slice(0, 5),
+                  );
+                } else {
+                  // tmpがformerMinosに格納されている場合
+                  const type = formerMinosRef.current[lastNum - 1];
+                  const formerMino = {
+                    position: getInitialPosition(type),
+                    type,
+                    rotation: 0,
+                    hasHold: false,
+                    hasUndone: false,
+                  };
+                  setCurrentMino({
+                    ...formerMino,
+                    position: getInitialPosition(
+                      formerMinosRef.current[lastNum - 1],
+                    ),
+                    hasHold: false,
+                  });
+                  setNextMinoList(
+                    [tmp.type, ...nextMinoListRef.current].slice(0, 5),
+                  );
+                }
+                // 一手戻すことで不要となった要素を削除
+                formerMinosRef.current.splice(formerMinosLength - 1, 1);
+              }
+            }
+          }
+          // 一定時間後にzボタンを再有効化
+          setTimeout(() => {
+            setButtonDisabled(false);
+          }, 500);
+          // }
+          break;
+        }
         default:
           break;
       }
@@ -433,6 +560,7 @@ export function useTetrisGame(
     currentMino,
     currentMinoPositions: getMinoPositions(currentMino),
     holdMino,
+    formerMinos,
     nextMinoList,
   };
 }
