@@ -14,9 +14,12 @@ type Props = {
 export function FieldFrame({ children, holdMinoType, nextMinoList }: Props) {
   return (
     <div className="flex gap-4 justify-center items-center h-screen">
-      <div className="w-48 mr-4">
-        <Link className="border rounded-md p-2 border-gray-500" to={url.menu}>
-          メニューに戻る
+      <div className="w-40 mr-4 flex flex-col">
+         <Link className="flex justify-center items-center border rounded-md p-2 border-gray-500 mb-2 transform transition duration-250 ease-in-out hover:scale-110 active:scale-95" to={url.menu}>
+            メニュー
+        </Link>
+        <Link className="flex justify-center items-center border rounded-md p-2 border-gray-500 transform transition duration-250 ease-in-out hover:scale-110 active:scale-95" to={url.quizEntrance}>
+            難易度選択
         </Link>
         <div className="mt-10">Hold</div>
         <div className="mt-8 h-24">
