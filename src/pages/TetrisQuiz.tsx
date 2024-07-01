@@ -79,7 +79,7 @@ export function TetrisQuiz({ question }: Props) {
     handleHardDrop,
   } = useTetrisGame(initialize, { judgeClear });
 
-  // 2秒後に回転し、その2秒後とさらにその2秒後にハードドロップ
+  // 【解説機能】 2秒後に回転し、その2秒後とさらにその2秒後にハードドロップ
   useEffect(() => {
     const executeStep = (index: number) => {
       if (index >= question.answer.length) {
