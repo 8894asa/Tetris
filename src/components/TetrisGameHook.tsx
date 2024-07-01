@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import {
   FieldBlock,
@@ -10,7 +11,7 @@ import {
   newEmptyField,
 } from "@/domains/tetrimino";
 
-type CurrentMino = Tetrimino & { hasHold: boolean };
+export type CurrentMino = Tetrimino & { hasHold: boolean };
 
 type TetrisGameHookType = {
   field: FieldBlock[][];
@@ -19,12 +20,10 @@ type TetrisGameHookType = {
   holdMino: Tetrimino | undefined;
   formerMinos: MinoType[];
   nextMinoList: MinoType[];
-  handleRotate: (isClockwise: boolean) => void;
-  handleMove: (direction: "left" | "right") => void;
-  handleSoftDrop: () => void;
+  setCurrentMino: (mino: CurrentMino) => void;
+  handleRotate: (rotation: number) => void;
+  handleMove: (distance: number) => void;
   handleHardDrop: () => void;
-  handleHold: () => void;
-  handleUndo: () => void;
 };
 
 const getMinoPositions = (mino: Tetrimino): Position[] => {
@@ -128,12 +127,12 @@ const isStacked = (blocks: Position[], field: FieldBlock[][]): boolean =>
 
 const canRotate = (
   mino: Tetrimino,
-  isClockwise: boolean,
+  rotationDirection: number,
   field: FieldBlock[][],
 ): boolean => {
   const rotatedBlocks = getMinoPositions({
     ...mino,
-    rotation: mino.rotation + (isClockwise ? -1 : 1),
+    rotation: mino.rotation + rotationDirection,
   });
   return !isStacked(rotatedBlocks, field);
 };
@@ -165,6 +164,10 @@ export function useTetrisGame(
   const [nextMinoList, setNextMinoList] = useState<MinoType[]>([]);
   const nextMinoListRef = useRef<MinoType[]>([]);
   nextMinoListRef.current = nextMinoList;
+
+  const location = useLocation();
+  // 解説ページかどうか
+  const isExplainPage = location.search === "?explain";
 
   const getNextMino = (): CurrentMino => {
     // nextMinoListに追加するMinoTypeを抽選
@@ -330,21 +333,22 @@ export function useTetrisGame(
     return () => clearInterval(timer);
   });
 
-  const handleRotate = (isClockwise: boolean) => {
-    if (canRotate(minoRef.current, isClockwise, fieldRef.current)) {
+  //　角度を引数に
+  const handleRotate = (rotation: number) => {
+    if (canRotate(minoRef.current, rotation, fieldRef.current)) {
       setCurrentMino({
         ...minoRef.current,
-        rotation: minoRef.current.rotation + (isClockwise ? -1 : 1),
+        rotation: minoRef.current.rotation + rotation,
       });
     }
   };
 
-  const handleMove = (direction: "left" | "right") => {
+  const handleMove = (distance: number) => {
     const movedMino = {
       ...minoRef.current,
       position: {
         ...minoRef.current.position,
-        x: minoRef.current.position.x + (direction === "left" ? -1 : 1),
+        x: minoRef.current.position.x + distance,
       },
     };
     if (!isStacked(getMinoPositions(movedMino), fieldRef.current)) {
@@ -352,12 +356,12 @@ export function useTetrisGame(
     }
   };
 
-  const handleSoftDrop = () => {
+  const handleSoftDrop = (distance: number) => {
     const droppedMino = {
       ...minoRef.current,
       position: {
         ...minoRef.current.position,
-        y: minoRef.current.position.y - 1,
+        y: minoRef.current.position.y - distance,
       },
     };
     if (!isStacked(getMinoPositions(droppedMino), fieldRef.current)) {
@@ -443,22 +447,24 @@ export function useTetrisGame(
     const handleKeyDown = (e: KeyboardEvent) => {
       // ボタンが押されたときに再度押されるのを防ぐ
       if (buttonDisabled) return;
+      // 解説ページだったら無効化
+      if (isExplainPage) return;
 
       switch (e.key) {
         case "a":
-          handleRotate(false);
+          handleRotate(-1);
           break;
         case "d":
-          handleRotate(true);
+          handleRotate(1);
           break;
         case "ArrowLeft":
-          handleMove("left");
+          handleMove(-1);
           break;
         case "ArrowRight":
-          handleMove("right");
+          handleMove(1);
           break;
         case "ArrowDown":
-          handleSoftDrop();
+          handleSoftDrop(1);
           break;
         case "ArrowUp":
           handleHardDrop();
@@ -484,11 +490,9 @@ export function useTetrisGame(
     holdMino,
     formerMinos,
     nextMinoList,
+    setCurrentMino,
     handleRotate,
     handleMove,
-    handleSoftDrop,
     handleHardDrop,
-    handleHold,
-    handleUndo,
   };
 }
