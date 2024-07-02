@@ -42,7 +42,7 @@ export const QUESTIONS: Question[] = [
       [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
     ],
     currentMinoType: "T",
-    nextMinoList: ["O", "I", "J", "L", "S"],
+    nextMinoList: ["O"],
     // TODO 後で考える。
     answer: [
       {
