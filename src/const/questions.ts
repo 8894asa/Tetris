@@ -24,8 +24,8 @@ export type Question = {
   currentMinoType: MinoType;
   nextMinoList: MinoType[];
   answer: {
-    position: { x: number; y: number };
-    rotation: number;
+    rotate: number;
+    move: number;
   }[];
 };
 
@@ -46,20 +46,12 @@ export const QUESTIONS: Question[] = [
     // TODO 後で考える。
     answer: [
       {
-        position: { x: 1, y: 0 },
-        rotation: 0,
+        rotate: 1,
+        move: 2,
       },
       {
-        position: { x: 0, y: 0 },
-        rotation: 0,
-      },
-      {
-        position: { x: 0, y: 0 },
-        rotation: 0,
-      },
-      {
-        position: { x: 0, y: 0 },
-        rotation: 0,
+        rotate: 0,
+        move: 0,
       },
     ],
   },
@@ -79,20 +71,20 @@ export const QUESTIONS: Question[] = [
     // TODO 後で考える。
     answer: [
       {
-        position: { x: 1, y: 0 },
-        rotation: 0,
+        rotate: 0,
+        move: 1,
       },
       {
-        position: { x: 0, y: 0 },
-        rotation: 0,
+        rotate: 0,
+        move: 0,
       },
       {
-        position: { x: 0, y: 0 },
-        rotation: 0,
+        rotate: 0,
+        move: 0,
       },
       {
-        position: { x: 0, y: 0 },
-        rotation: 0,
+        rotate: 0,
+        move: 0,
       },
     ],
   },

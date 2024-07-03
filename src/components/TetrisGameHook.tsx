@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import {
   FieldBlock,
@@ -19,6 +20,10 @@ type TetrisGameHookType = {
   holdMino: Tetrimino | undefined;
   formerMinos: MinoType[];
   nextMinoList: MinoType[];
+  setCurrentMino: (mino: CurrentMino) => void;
+  handleRotate: (rotation: number) => void;
+  handleMove: (distance: number) => void;
+  handleHardDrop: () => void;
 };
 
 const getMinoPositions = (mino: Tetrimino): Position[] => {
@@ -122,12 +127,12 @@ const isStacked = (blocks: Position[], field: FieldBlock[][]): boolean =>
 
 const canRotate = (
   mino: Tetrimino,
-  isClockwise: boolean,
+  rotationDirection: number,
   field: FieldBlock[][],
 ): boolean => {
   const rotatedBlocks = getMinoPositions({
     ...mino,
-    rotation: mino.rotation + (isClockwise ? -1 : 1),
+    rotation: mino.rotation + rotationDirection,
   });
   return !isStacked(rotatedBlocks, field);
 };
@@ -159,6 +164,10 @@ export function useTetrisGame(
   const [nextMinoList, setNextMinoList] = useState<MinoType[]>([]);
   const nextMinoListRef = useRef<MinoType[]>([]);
   nextMinoListRef.current = nextMinoList;
+
+  const location = useLocation();
+  // 解説ページかどうか
+  const isExplainPage = location.search === "?explain";
 
   const getNextMino = (): CurrentMino => {
     // nextMinoListに追加するMinoTypeを抽選
@@ -324,236 +333,155 @@ export function useTetrisGame(
     return () => clearInterval(timer);
   });
 
+  // 角度を引数に
+  const handleRotate = (rotation: number) => {
+    if (canRotate(minoRef.current, rotation, fieldRef.current)) {
+      setCurrentMino({
+        ...minoRef.current,
+        rotation: minoRef.current.rotation + rotation,
+      });
+    }
+  };
+
+  const handleMove = (distance: number) => {
+    const movedMino = {
+      ...minoRef.current,
+      position: {
+        ...minoRef.current.position,
+        x: minoRef.current.position.x + distance,
+      },
+    };
+    if (!isStacked(getMinoPositions(movedMino), fieldRef.current)) {
+      setCurrentMino(movedMino);
+    }
+  };
+
+  const handleSoftDrop = (distance: number) => {
+    const droppedMino = {
+      ...minoRef.current,
+      position: {
+        ...minoRef.current.position,
+        y: minoRef.current.position.y - distance,
+      },
+    };
+    if (!isStacked(getMinoPositions(droppedMino), fieldRef.current)) {
+      setCurrentMino(droppedMino);
+    }
+  };
+
+  const handleHardDrop = () => {
+    const yPos =
+      [...Array(minoRef.current.position.y).keys()].reverse().find((y) =>
+        isStacked(
+          getMinoPositions({
+            ...minoRef.current,
+            position: { ...minoRef.current.position, y },
+          }),
+          fieldRef.current,
+        ),
+      ) ?? -1;
+
+    setCurrentMino({
+      ...minoRef.current,
+      position: { ...minoRef.current.position, y: yPos + 1 },
+    });
+  };
+
+  const handleHold = () => {
+    if (!minoRef.current.hasHold) {
+      if (holdMinoRef.current == null) {
+        setHoldMino({ ...minoRef.current, rotation: 0 });
+        setCurrentMino(getNextMino());
+      } else {
+        const tmp = minoRef.current;
+        setCurrentMino({
+          ...holdMinoRef.current,
+          position: getInitialPosition(holdMinoRef.current.type),
+          hasHold: true,
+        });
+        setHoldMino({ ...tmp, rotation: 0 });
+      }
+    }
+  };
+
+  const handleUndo = () => {
+    if (isDeletingRef.current || buttonDisabled) return;
+    setButtonDisabled(true);
+
+    if (formerMinosRef.current.length > 0) {
+      const tmp = minoRef.current;
+      const init = initialize();
+      const formerFieldsLength = formerFields.current.length;
+
+      if (formerFieldsLength <= 1) {
+        setField(init.field);
+        formerFields.current.length = 0;
+      } else {
+        setField(formerFields.current[formerFieldsLength - 2]);
+        formerFields.current.pop();
+      }
+
+      if (formerMinosRef.current.length <= 1) {
+        setFormerMinos([]);
+        setCurrentMino(init.currentMino);
+        setNextMinoList(init.nextMinoList);
+      } else {
+        const lastNum = formerMinosRef.current.length - 1;
+        const type = formerMinosRef.current[lastNum - 1];
+        setCurrentMino({
+          ...minoRef.current,
+          position: getInitialPosition(type),
+          type,
+          rotation: 0,
+          hasHold: false,
+        });
+        setNextMinoList([tmp.type, ...nextMinoListRef.current].slice(0, 5));
+        formerMinosRef.current.pop();
+      }
+    }
+
+    setTimeout(() => setButtonDisabled(false), 500);
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // ボタンが押されたときに再度押されるのを防ぐ
+      if (buttonDisabled) return;
+      // 解説ページだったら無効化
+      if (isExplainPage) return;
+
       switch (e.key) {
-        // 反時計回りに回転
-        case "a": {
-          if (canRotate(minoRef.current, false, fieldRef.current)) {
-            setCurrentMino({
-              ...minoRef.current,
-              rotation: minoRef.current.rotation + 1,
-            });
-          }
+        case "a":
+          handleRotate(-1);
           break;
-        }
-        // 時計回りに回転
-        case "d": {
-          if (canRotate(minoRef.current, true, fieldRef.current)) {
-            setCurrentMino({
-              ...minoRef.current,
-              rotation: minoRef.current.rotation - 1,
-            });
-          }
+        case "d":
+          handleRotate(1);
           break;
-        }
-        // 左に移動
-        case "ArrowLeft": {
-          const movedMino = {
-            ...minoRef.current,
-            position: {
-              ...minoRef.current.position,
-              x: minoRef.current.position.x - 1,
-            },
-          };
-          if (!isStacked(getMinoPositions(movedMino), fieldRef.current)) {
-            setCurrentMino(movedMino);
-          }
+        case "ArrowLeft":
+          handleMove(-1);
           break;
-        }
-        // 右に移動
-        case "ArrowRight": {
-          const movedMino = {
-            ...minoRef.current,
-            position: {
-              ...minoRef.current.position,
-              x: minoRef.current.position.x + 1,
-            },
-          };
-          if (!isStacked(getMinoPositions(movedMino), fieldRef.current)) {
-            setCurrentMino(movedMino);
-          }
+        case "ArrowRight":
+          handleMove(1);
           break;
-        }
-        // ソフトドロップ
-        case "ArrowDown": {
-          const droppedMino = {
-            ...minoRef.current,
-            position: {
-              ...minoRef.current.position,
-              y: minoRef.current.position.y - 1,
-            },
-          };
-          if (!isStacked(getMinoPositions(droppedMino), fieldRef.current)) {
-            setCurrentMino({
-              ...minoRef.current,
-              position: {
-                ...minoRef.current.position,
-                y: minoRef.current.position.y - 1,
-              },
-            });
-          }
+        case "ArrowDown":
+          handleSoftDrop(1);
           break;
-        }
-        // ハードドロップ
-        case "ArrowUp": {
-          if (
-            isStacked(
-              getMinoPositions({
-                ...minoRef.current,
-                position: {
-                  ...minoRef.current.position,
-                  y: minoRef.current.position.y - 1,
-                },
-              }),
-              fieldRef.current,
-            )
-          ) {
-            return;
-          }
-          let j = 20;
-          while (
-            !isStacked(
-              getMinoPositions({
-                ...minoRef.current,
-                position: {
-                  ...minoRef.current.position,
-                  y: j,
-                },
-              }),
-              fieldRef.current,
-            )
-          ) {
-            // eslint-disable-next-line no-plusplus
-            j--;
-          }
-          setCurrentMino({
-            ...minoRef.current,
-            position: {
-              ...minoRef.current.position,
-              y: j + 1,
-            },
-          });
+        case "ArrowUp":
+          handleHardDrop();
           break;
-        }
-        // ホールド
-        case " ": {
-          if (!minoRef.current.hasHold) {
-            if (holdMinoRef.current == null) {
-              setHoldMino({ ...minoRef.current, rotation: 0 });
-              setCurrentMino(getNextMino());
-            } else {
-              const tmp = minoRef.current;
-              setCurrentMino({
-                ...holdMinoRef.current,
-                position: getInitialPosition(holdMinoRef.current.type),
-                hasHold: true,
-              });
-              setHoldMino({ ...tmp, rotation: 0 });
-            }
-          }
+        case " ":
+          handleHold();
           break;
-        }
-        // 一手戻す
-        case "z": {
-          if (isDeletingRef.current || buttonDisabled) {
-            return;
-          }
-          // if (isDeletingRef.current === false && !buttonDisabled) {
-          // zボタンの連続無効化
-          setButtonDisabled(true);
-
-          if (formerMinosRef != null) {
-            // フィールド上から直前のMinoを消す
-            const formerMinosLength = formerMinosRef.current.length;
-            if (formerMinosLength !== 0) {
-              const tmp = minoRef.current;
-              const init = initialize();
-              const formerFieldsLength = formerFields.current.length;
-              if (formerFieldsLength === 1 || formerFields.current == null) {
-                // Fieldの初期化
-                setField(init.field);
-                formerFields.current.length = 0;
-              }
-              if (formerFieldsLength >= 2) {
-                const formerNum = formerFieldsLength - 2;
-                const fieldTmp = formerFields.current[formerNum];
-                formerFields.current.pop();
-                setField(fieldTmp);
-              }
-
-              if (formerMinosLength === 1 || formerMinosLength == null) {
-                // MinoTypeの初期化
-                formerMinosRef.current.length = 0;
-                setFormerMinos([]);
-                setCurrentMino(init.currentMino);
-                setNextMinoList(init.nextMinoList);
-              }
-              if (formerMinosLength >= 2) {
-                const lastNum = formerMinosLength - 1;
-
-                if (formerMinosRef.current[lastNum] !== tmp.type) {
-                  // tmpがformerMinosに格納されていない場合
-                  // tmpがformerMinosに格納されている場合
-                  const type = formerMinosRef.current[lastNum];
-                  const formerMino = {
-                    position: getInitialPosition(type),
-                    type,
-                    rotation: 0,
-                    hasHold: false,
-                    hasUndone: false,
-                  };
-                  setCurrentMino({
-                    ...formerMino,
-                    position: getInitialPosition(
-                      formerMinosRef.current[lastNum],
-                    ),
-                    hasHold: false,
-                  });
-                  setNextMinoList(
-                    [tmp.type, ...nextMinoListRef.current].slice(0, 5),
-                  );
-                } else {
-                  // tmpがformerMinosに格納されている場合
-                  const type = formerMinosRef.current[lastNum - 1];
-                  const formerMino = {
-                    position: getInitialPosition(type),
-                    type,
-                    rotation: 0,
-                    hasHold: false,
-                    hasUndone: false,
-                  };
-                  setCurrentMino({
-                    ...formerMino,
-                    position: getInitialPosition(
-                      formerMinosRef.current[lastNum - 1],
-                    ),
-                    hasHold: false,
-                  });
-                  setNextMinoList(
-                    [tmp.type, ...nextMinoListRef.current].slice(0, 5),
-                  );
-                }
-                // 一手戻すことで不要となった要素を削除
-                formerMinosRef.current.splice(formerMinosLength - 1, 1);
-              }
-            }
-          }
-          // 一定時間後にzボタンを再有効化
-          setTimeout(() => {
-            setButtonDisabled(false);
-          }, 500);
-          // }
+        case "z":
+          handleUndo();
           break;
-        }
         default:
           break;
       }
     };
     document.addEventListener("keydown", handleKeyDown);
-
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [buttonDisabled]);
 
   return {
     field,
@@ -562,5 +490,9 @@ export function useTetrisGame(
     holdMino,
     formerMinos,
     nextMinoList,
+    setCurrentMino,
+    handleRotate,
+    handleMove,
+    handleHardDrop,
   };
 }
