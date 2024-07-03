@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus */
 
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 import { Field } from "@/components/Field";
 import { FieldFrame } from "@/components/FieldFrame";
@@ -19,6 +20,10 @@ type Props = {
 };
 
 export function TetrisQuiz({ question }: Props) {
+  const location = useLocation();
+  // 解説ページかどうか
+  const isExplainPage = location.search === "?explain";
+
   // クイズの初期フィールドのミノ配置
   const getFieldData = (): FieldData[] => {
     const fieldData: FieldData[] = [];
@@ -81,6 +86,8 @@ export function TetrisQuiz({ question }: Props) {
 
   // 【解説機能】 2秒後に回転し、その2秒後とさらにその2秒後にハードドロップ
   useEffect(() => {
+    if (!isExplainPage) return () => {};
+
     const executeStep = (index: number) => {
       if (index >= question.answer.length) {
         // 全てのステップが完了した後に2秒の遅延を追加
@@ -92,6 +99,7 @@ export function TetrisQuiz({ question }: Props) {
 
       const { rotate, move } = question.answer[index];
 
+      // 2秒間隔で回転し、その1秒後に移動し、その1秒後にハードドロップ
       setTimeout(() => {
         handleRotate(rotate);
         setTimeout(() => {
