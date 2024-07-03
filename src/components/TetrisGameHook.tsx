@@ -11,7 +11,7 @@ import {
   newEmptyField,
 } from "@/domains/tetrimino";
 
-export type CurrentMino = Tetrimino & { hasHold: boolean };
+type CurrentMino = Tetrimino & { hasHold: boolean };
 
 type TetrisGameHookType = {
   field: FieldBlock[][];
