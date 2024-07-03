@@ -333,7 +333,7 @@ export function useTetrisGame(
     return () => clearInterval(timer);
   });
 
-  //　角度を引数に
+  // 角度を引数に
   const handleRotate = (rotation: number) => {
     if (canRotate(minoRef.current, rotation, fieldRef.current)) {
       setCurrentMino({
@@ -379,7 +379,7 @@ export function useTetrisGame(
           }),
           fieldRef.current,
         ),
-      ) ?? 0;
+      ) ?? -1;
 
     setCurrentMino({
       ...minoRef.current,
