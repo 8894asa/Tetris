@@ -391,7 +391,7 @@ export function useTetrisGame(
     return () => clearInterval(timer);
   });
 
-  // 角度を引数に
+  // 反時計回りを正とした角度を引数に
   const handleRotate = (rotation: number) => {
     if (canRotate(minoRef.current, rotation, fieldRef.current)) {
       setCurrentMino({
@@ -510,10 +510,10 @@ export function useTetrisGame(
 
       switch (e.key) {
         case "a":
-          handleRotate(-1);
+          handleRotate(1);
           break;
         case "d":
-          handleRotate(1);
+          handleRotate(-1);
           break;
         case "ArrowLeft":
           handleMove(-1);
