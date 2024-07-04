@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -68,14 +69,16 @@ export function FieldFrame({ children, holdMinoType, nextMinoList }: Props) {
         </div>
       </div>
       {children}
-      <div className="flex-col flex justify-center gap-4 w-32">
+      <div>
         <div className="text-center">NEXT</div>
-        {nextMinoList.map((nextMino, i) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div className="text-center" key={i}>
-            <TetriminoUI type={nextMino} />
-          </div>
-        ))}
+        <div className="mt-8 flex-col flex justify-start h-[26rem] gap-8 w-32">
+          {nextMinoList.map((nextMino, i) => (
+            <div className="h-16 min-h-[4rem] flex gap-8" key={i}>
+              <div className="text-sm">{i + 1}</div>
+              <TetriminoUI type={nextMino} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

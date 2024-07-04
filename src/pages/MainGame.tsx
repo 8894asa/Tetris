@@ -3,6 +3,7 @@ import { FieldFrame } from "@/components/FieldFrame";
 import { useTetrisGame } from "@/components/TetrisGameHook";
 import {
   MinoType,
+  Tetrimino,
   getInitialPosition,
   minoTypes,
   newEmptyField,
@@ -49,8 +50,40 @@ export function MainGame() {
     };
   };
 
+  const getNextLists = (
+    minoTypeList: MinoType[],
+    nextMinoList: MinoType[],
+  ): {
+    newCurrentMino: Tetrimino;
+    newMinoTypeList: MinoType[];
+    newNextMinoList: MinoType[];
+  } => {
+    const newCurrentMino: Tetrimino = {
+      type: nextMinoList[0],
+      position: getInitialPosition(nextMinoList[0]),
+      rotation: 0,
+    };
+
+    // nextMinoListに追加するMinoTypeを抽選
+    const additionalType =
+      minoTypeList[Math.floor(Math.random() * minoTypeList.length)];
+
+    const newMinoTypeList =
+      minoTypeList.length === 1
+        ? minoTypes.concat()
+        : minoTypeList.filter((mino) => mino !== additionalType);
+
+    const newNextMinoList = [...nextMinoList.slice(1), additionalType];
+
+    return {
+      newCurrentMino,
+      newMinoTypeList,
+      newNextMinoList,
+    };
+  };
+
   const { field, currentMino, currentMinoPositions, holdMino, nextMinoList } =
-    useTetrisGame(initialize);
+    useTetrisGame(initialize, getNextLists);
 
   return (
     <FieldFrame holdMinoType={holdMino?.type} nextMinoList={nextMinoList}>

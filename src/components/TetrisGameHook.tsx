@@ -147,8 +147,17 @@ export function useTetrisGame(
     minoTypeList: MinoType[];
     nextMinoList: MinoType[];
   },
+  getNextLists: (
+    minoTypeList: MinoType[],
+    nextMinoList: MinoType[],
+  ) => {
+    newCurrentMino: Tetrimino;
+    newMinoTypeList: MinoType[];
+    newNextMinoList: MinoType[];
+  },
   option?: {
     judgeClear?: (field: FieldBlock[][]) => boolean;
+    judgeFailed?: (nextMinoList: MinoType[], field: FieldBlock[][]) => boolean;
   },
 ): TetrisGameHookType {
   const [time, setTime] = useState(0);
@@ -226,6 +235,9 @@ export function useTetrisGame(
 
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
 
+  const [isClear, setIsClear] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
+
   const setInitValue = () => {
     const init = initialize();
     setField(init.field);
@@ -250,9 +262,16 @@ export function useTetrisGame(
         return;
       }
 
-      // クリア判定
-      if (option?.judgeClear != null && option.judgeClear(fieldRef.current)) {
+      if (isClear) {
         alert("clear!");
+        setIsClear(false);
+        setInitValue();
+        return;
+      }
+
+      if (isFailed) {
+        alert("failed!");
+        setIsFailed(false);
         setInitValue();
         return;
       }
@@ -273,67 +292,106 @@ export function useTetrisGame(
       }
 
       // ミノが落下したら重なるか
-      if (isStacked(getMinoPositions(droppedMino), fieldRef.current)) {
-        // フィールド上のブロックにcurrentMinoを加える
-        fieldRef.current = fieldRef.current.map((row, y) =>
-          row.map((block, x) => {
-            if (
-              getMinoPositions(currentMino).some(
-                (position) => position.x === x && position.y === y,
-              )
-            ) {
-              return { isFilled: true, type: currentMino.type };
-            }
-            return block;
-          }),
-        );
-        setField(fieldRef.current);
-
-        // 一手戻すためにfieldをformerFieldsにセット
-        const currentField = JSON.parse(JSON.stringify(fieldRef.current));
-        formerFields.current.push(currentField);
-
-        // 削除判定中フラグをセット
-        setIsDeleting(true);
-        // ラインが埋まっていれば消す
-        fieldRef.current = [
-          ...fieldRef.current.filter((row) =>
-            row.some((block) => !block.isFilled),
-          ),
-          ...newEmptyField(),
-        ].slice(0, 24);
-        setField(fieldRef.current);
-        // 削除判定中フラグを解除
-        setIsDeleting(false);
-
-        const nextMino = getNextMino();
-
-        // 負け判定
-        // 21段目にミノを置くか, 次のミノの出現位置にブロックがあると負け
-        if (
-          getMinoPositions(currentMino).reduce(
-            (min, cur) => Math.min(min, cur.y),
-            24,
-          ) >= 21 ||
-          isStacked([getInitialPosition(nextMino.type)], fieldRef.current)
-        ) {
-          alert("game over!");
-
-          setInitValue();
-          return;
-        }
-
-        // ミノが設置されたので次のミノをcurrentMinoにセット
-        setCurrentMino(nextMino);
+      if (!isStacked(getMinoPositions(droppedMino), fieldRef.current)) {
+        setCurrentMino(droppedMino);
         return;
       }
-      setCurrentMino(droppedMino);
+
+      // フィールド上のブロックにcurrentMinoを加える
+      fieldRef.current = fieldRef.current.map((row, y) =>
+        row.map((block, x) => {
+          if (
+            getMinoPositions(currentMino).some(
+              (position) => position.x === x && position.y === y,
+            )
+          ) {
+            return { isFilled: true, type: currentMino.type };
+          }
+          return block;
+        }),
+      );
+      setField(fieldRef.current);
+
+      // 一手戻すためにfieldをformerFieldsにセット
+      const currentField = JSON.parse(JSON.stringify(fieldRef.current));
+      formerFields.current.push(currentField);
+
+      // 削除判定中フラグをセット
+      setIsDeleting(true);
+      // ラインが埋まっていれば消す
+      fieldRef.current = [
+        ...fieldRef.current.filter((row) =>
+          row.some((block) => !block.isFilled),
+        ),
+        ...newEmptyField(),
+      ].slice(0, 24);
+      setField(fieldRef.current);
+      // 削除判定中フラグを解除
+      setIsDeleting(false);
+
+      // クイズ用判定
+      // クリア判定
+      if (option?.judgeClear != null && option.judgeClear(fieldRef.current)) {
+        // currentMinoが見えないように動かす
+        // 処理的にはcurrentMinoをundefinedとなっているべきだが, currentMinoにundefinedを許容すると面倒なのでやむなし
+        setCurrentMino({
+          ...currentMino,
+          position: {
+            x: 0,
+            y: 24,
+          },
+        });
+        setIsClear(true);
+        return;
+      }
+
+      // 失敗判定
+      if (
+        option?.judgeFailed != null &&
+        option.judgeFailed(nextMinoList, field)
+      ) {
+        setCurrentMino({
+          ...currentMino,
+          position: {
+            x: 0,
+            y: 24,
+          },
+        });
+        setIsFailed(true);
+        return;
+      }
+
+      const { newCurrentMino, newMinoTypeList, newNextMinoList } = getNextLists(
+        minoListRef.current,
+        nextMinoListRef.current,
+      );
+
+      // 負け判定
+      // 21段目にミノを置くか, 次のミノの出現位置にブロックがあると負け
+      if (
+        getMinoPositions(minoRef.current).reduce(
+          (min, cur) => Math.min(min, cur.y),
+          24,
+        ) >= 21 ||
+        isStacked([getInitialPosition(newCurrentMino.type)], fieldRef.current)
+      ) {
+        alert("game over!");
+
+        setInitValue();
+        return;
+      }
+
+      // ミノが設置されたので次のミノをcurrentMinoにセット
+      setMinoTypeList(newMinoTypeList);
+      setNextMinoList(newNextMinoList);
+      setCurrentMino({ ...newCurrentMino, hasHold: false });
     };
+
     const timer = setInterval(handleChangeTime, 100);
     return () => clearInterval(timer);
   });
 
-  // 角度を引数に
+  // 反時計回りを正とした角度を引数に
   const handleRotate = (rotation: number) => {
     if (canRotate(minoRef.current, rotation, fieldRef.current)) {
       setCurrentMino({
@@ -452,10 +510,10 @@ export function useTetrisGame(
 
       switch (e.key) {
         case "a":
-          handleRotate(-1);
+          handleRotate(1);
           break;
         case "d":
-          handleRotate(1);
+          handleRotate(-1);
           break;
         case "ArrowLeft":
           handleMove(-1);

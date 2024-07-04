@@ -1,5 +1,3 @@
-/* eslint-disable no-plusplus */
-
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -10,6 +8,8 @@ import type { Question } from "@/const/questions";
 import {
   FieldBlock,
   FieldData,
+  MinoType,
+  Tetrimino,
   getInitialPosition,
   minoTypes,
   newField,
@@ -29,7 +29,9 @@ export function TetrisQuiz({ question }: Props) {
     const fieldData: FieldData[] = [];
     const { initialMinoGrid } = question;
 
+    // eslint-disable-next-line no-plusplus
     for (let y = 0; y < initialMinoGrid.length; y++) {
+      // eslint-disable-next-line no-plusplus
       for (let x = 0; x < initialMinoGrid[y].length; x++) {
         if (initialMinoGrid[y][x] === 1) {
           fieldData.push({
@@ -54,10 +56,7 @@ export function TetrisQuiz({ question }: Props) {
       hasHold: false,
     };
 
-    // 現在と次のミノを除く、ミノタイプのリストを作成。ミノの種類を１周期で考えたいので
-    const minoTypeList = minoTypes
-      .filter((type) => type !== currentMinoType)
-      .filter((type) => !nextMinoList.some((nextType) => type === nextType));
+    const minoTypeList = minoTypes.concat();
 
     return {
       field: newField(getFieldData()),
@@ -70,8 +69,43 @@ export function TetrisQuiz({ question }: Props) {
     };
   };
 
+  const getNextLists = (
+    minoTypeList: MinoType[],
+    nextMinoList: MinoType[],
+  ): {
+    newCurrentMino: Tetrimino;
+    newMinoTypeList: MinoType[];
+    newNextMinoList: MinoType[];
+  } => {
+    if (nextMinoList.length === 0) {
+      console.error("nextMinoList is empty");
+      return {
+        newCurrentMino: {
+          type: "I",
+          position: getInitialPosition("I"),
+          rotation: 0,
+        },
+        newMinoTypeList: minoTypeList,
+        newNextMinoList: nextMinoList,
+      };
+    }
+
+    const newCurrentMino: Tetrimino = {
+      type: nextMinoList[0],
+      position: getInitialPosition(nextMinoList[0]),
+      rotation: 0,
+    };
+    return {
+      newCurrentMino,
+      newMinoTypeList: minoTypeList,
+      newNextMinoList: nextMinoList.slice(1),
+    };
+  };
+
   const judgeClear = (field: FieldBlock[][]) =>
     !field.some((row) => row.some((block) => block.isFilled));
+
+  const judgeFailed = (nextMinoList: MinoType[]) => nextMinoList.length === 0;
 
   const {
     field,
@@ -82,7 +116,7 @@ export function TetrisQuiz({ question }: Props) {
     handleRotate,
     handleMove,
     handleHardDrop,
-  } = useTetrisGame(initialize, { judgeClear });
+  } = useTetrisGame(initialize, getNextLists, { judgeClear, judgeFailed });
 
   // 【解説機能】 2秒後に回転し、その2秒後とさらにその2秒後にハードドロップ
   useEffect(() => {
