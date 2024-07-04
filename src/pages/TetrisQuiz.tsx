@@ -1,5 +1,3 @@
-/* eslint-disable no-plusplus */
-
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -31,7 +29,9 @@ export function TetrisQuiz({ question }: Props) {
     const fieldData: FieldData[] = [];
     const { initialMinoGrid } = question;
 
+    // eslint-disable-next-line no-plusplus
     for (let y = 0; y < initialMinoGrid.length; y++) {
+      // eslint-disable-next-line no-plusplus
       for (let x = 0; x < initialMinoGrid[y].length; x++) {
         if (initialMinoGrid[y][x] === 1) {
           fieldData.push({
