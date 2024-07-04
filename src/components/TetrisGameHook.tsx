@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 
+import { url } from "@/const/url";
 import {
   FieldBlock,
   MinoType,
@@ -323,7 +325,7 @@ export function useTetrisGame(
     const timer = setInterval(handleChangeTime, 100);
     return () => clearInterval(timer);
   });
-
+  const location = useLocation();
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
@@ -459,7 +461,6 @@ export function useTetrisGame(
           if (isDeletingRef.current || buttonDisabled) {
             return;
           }
-          // if (isDeletingRef.current === false && !buttonDisabled) {
           // zボタンの連続無効化
           setButtonDisabled(true);
 
@@ -483,6 +484,38 @@ export function useTetrisGame(
               }
 
               if (formerMinosLength === 1 || formerMinosLength == null) {
+                if (location.pathname === url.mainGame) {
+                  // ゲーム用（初期値がない場合）
+                  const type = formerMinosRef.current[0];
+                  const formerMino = {
+                    position: getInitialPosition(type),
+                    type,
+                    rotation: 0,
+                    hasHold: false,
+                    hasUndone: false,
+                  };
+                  setCurrentMino({
+                    ...formerMino,
+                    position: getInitialPosition(formerMinosRef.current[0]),
+                    hasHold: false,
+                  });
+                  if (type !== tmp.type) {
+                    // tmpがformerMinosに格納されていない場合
+                    console.log("1", tmp.type);
+                    setNextMinoList(
+                      [tmp.type, ...nextMinoListRef.current].slice(0, 5),
+                    );
+                  } else {
+                    // tmpがformerMinosに格納されている場合
+                    console.log("2", tmp.type);
+                    setNextMinoList([...nextMinoListRef.current].slice(0, 5));
+                  }
+                  console.log("formerMinosRef.current", formerMinosRef.current);
+                  formerMinosRef.current.length = 0;
+                  setFormerMinos([]);
+                  console.log("formerMinosRef.current", formerMinosRef.current);
+                  return;
+                }
                 // MinoTypeの初期化
                 formerMinosRef.current.length = 0;
                 setFormerMinos([]);
@@ -491,10 +524,8 @@ export function useTetrisGame(
               }
               if (formerMinosLength >= 2) {
                 const lastNum = formerMinosLength - 1;
-
                 if (formerMinosRef.current[lastNum] !== tmp.type) {
                   // tmpがformerMinosに格納されていない場合
-                  // tmpがformerMinosに格納されている場合
                   const type = formerMinosRef.current[lastNum];
                   const formerMino = {
                     position: getInitialPosition(type),
