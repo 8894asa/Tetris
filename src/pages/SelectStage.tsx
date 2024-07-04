@@ -28,6 +28,7 @@ export function SelectStage0() {
         <div className="flex flex-col gap-4 justify-center items-center">
           {filteredQuestions.map((question, i) => (
             <Link
+              // eslint-disable-next-line react/no-array-index-key
               key={i}
               className="w-48 border border-gray-500 rounded-md p-4 transform transition duration-500 ease-in-out hover:scale-110 active:scale-95"
               to={`${url.tetrisQuiz}/${question.id}`}
@@ -76,6 +77,7 @@ export function SelectStage1() {
         <div className="flex flex-col gap-4 justify-center items-center">
           {filteredQuestions.map((question, i) => (
             <Link
+              // eslint-disable-next-line react/no-array-index-key
               key={i}
               className="w-48 border border-gray-500 rounded-md p-4 transform transition duration-500 ease-in-out hover:scale-110 active:scale-95"
               to={`${url.tetrisQuiz}/${question.id}`}
@@ -124,6 +126,7 @@ export function SelectStage2() {
         <div className="flex flex-col gap-4 justify-center items-center">
           {filteredQuestions.map((question, i) => (
             <Link
+              // eslint-disable-next-line react/no-array-index-key
               key={i}
               className="w-48 border border-gray-500 rounded-md p-4 transform transition duration-500 ease-in-out hover:scale-110 active:scale-95"
               to={`${url.tetrisQuiz}/${question.id}`}
