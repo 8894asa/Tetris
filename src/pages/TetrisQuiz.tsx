@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { Field } from "@/components/Field";
 import { FieldFrame } from "@/components/FieldFrame";
@@ -20,6 +20,7 @@ type Props = {
 };
 
 export function TetrisQuiz({ question }: Props) {
+  const navigate = useNavigate();
   const location = useLocation();
   // 解説ページかどうか
   const isExplainPage = location.search === "?explain";
@@ -105,6 +106,11 @@ export function TetrisQuiz({ question }: Props) {
   const judgeClear = (field: FieldBlock[][]) =>
     !field.some((row) => row.some((block) => block.isFilled));
 
+  const handleClear = () => {
+    navigate("./");
+    window.location.reload();
+  };
+
   const judgeFailed = (nextMinoList: MinoType[]) => nextMinoList.length === 0;
 
   const {
@@ -116,7 +122,12 @@ export function TetrisQuiz({ question }: Props) {
     handleRotate,
     handleMove,
     handleHardDrop,
-  } = useTetrisGame(initialize, getNextLists, { judgeClear, judgeFailed });
+    handleHold,
+  } = useTetrisGame(initialize, getNextLists, {
+    judgeClear,
+    handleClear,
+    judgeFailed,
+  });
 
   // 【解説機能】 2秒後に回転し、その2秒後とさらにその2秒後にハードドロップ
   useEffect(() => {
@@ -131,10 +142,15 @@ export function TetrisQuiz({ question }: Props) {
         return;
       }
 
-      const { rotate, move } = question.answer[index];
+      const { rotate, move, isHold } = question.answer[index];
 
       // 2秒間隔で回転し、その1秒後に移動し、その1秒後にハードドロップ
       setTimeout(() => {
+        if (isHold ?? false) {
+          handleHold();
+          executeStep(index + 1);
+          return;
+        }
         handleRotate(rotate);
         setTimeout(() => {
           handleMove(move);
