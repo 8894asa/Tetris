@@ -153,7 +153,7 @@ export const QUESTIONS: Question[] = [
       },
     ],
   },
-  {
+   {
     id: 5,
     turn: 5,
     difficulty: "hard",
@@ -168,30 +168,26 @@ export const QUESTIONS: Question[] = [
     currentMinoType: "L",
     nextMinoList: ["Z", "T", "O", "J"],
     answer: [
-      // {
-      //   position: { x: 0, y: 3 },
-      //   rotation: 3,
-      // },
-      // {
-      //   position: { x: 2, y: 3 },
-      //   rotation: 0,
-      // },
-      // {
-      //   position: { x: 4, y: 3 },
-      //   rotation: 2,
-      // },
-      // {
-      //   position: { x: 6, y: 2 },
-      //   rotation: 0,
-      // },
-      // {
-      //   position: { x: 1, y: 4 },
-      //   rotation: 2,
-      // },
-      // {
-      //   position: { x: 3, y: 1 },
-      //   rotation: 2,
-      // },
+      {
+        move: -3,
+        rotate: 1,
+      },
+      {
+        move: -1,
+        rotate: 0,
+      },
+      {
+        move: 1,
+        rotate: 2,
+      },
+      {
+        move: 2,
+        rotate: 0,
+      },
+      {
+        move: 0,
+        rotate: 2,
+      },
     ],
   },
   {
@@ -241,7 +237,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: 7, // hold 2->3
-    turn: 4,
+    turn: 6,
     difficulty: "hard",
     name: "上クラス問題2",
     description: "高難易度問題です。",
@@ -252,30 +248,36 @@ export const QUESTIONS: Question[] = [
       [1, 1, 1, 1, 1, 0, 1, 0, 1, 1], // 1行目
     ],
     currentMinoType: "T",
-    nextMinoList: ["J", "I", "L"],
+    nextMinoList: ["J", "I", "L","O"],
     answer: [
-      // {
-      //   position: { x: 4, y: 3 },
-      //   rotation: 0,
-      // },
-      // // hold
-      // {
-      //   position: { x: 1, y: 2 },
-      //   rotation: 1,
-      // },
-      // {
-      //   position: { x: 0, y: 2 },
-      //   rotation: 0,
-      // },
-      // {
-      //   position: { x: 6, y: 2 },
-      //   rotation: 3,
-      // },
-      // // hold
-      // {
-      //   position: { x: 3, y: 1 },
-      //   rotation: 2,
-      // },
+       {
+        move: 1,
+        rotate: 0,
+      },
+      {
+        move: 0,
+        rotate: 0,
+        isHold: true
+      },
+      // hold
+      {
+        move: -2,
+        rotate: 0,
+      },
+      {
+        move: 3,
+        rotate: 1,
+      },
+      {
+        move: 0,
+        rotate: 0,
+        isHold: true
+      },
+      {
+        move: 0,
+        rotate: -2,
+      },
+
     ],
   },
   {
