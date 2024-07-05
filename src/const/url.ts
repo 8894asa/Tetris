@@ -3,8 +3,7 @@ export const url = {
   mainGame: "/main",
   menu: "/",
   quizEntrance: "/quizEntrance",
-  selectstage0: "/selectStage0",
-  selectstage1: "/selectStage1",
-  selectstage2: "/selectStage2",
+  level1: "/level1",
+  level2: "/level2",
+  level3: "/level3",
 };
-

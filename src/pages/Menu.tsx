@@ -4,17 +4,17 @@ import { url } from "@/const/url";
 
 export function Menu() {
   return (
-    <div className="font-bold text-center mt-20">
-      <div className="text-6xl">テトリス</div>
-      <div className="text-3xl flex flex-col gap-16 mt-24">
+    <div className="font-bold text-center">
+      <h2 className="text-4xl mt-12">テトリス</h2>
+      <div className="text-xl flex flex-col gap-8 mt-12">
         <Link
-          className="border py-4 px-8 w-fit border-gray-500 rounded-md mx-auto"
+          className="border py-2 px-4 w-fit border-gray-500 rounded-md mx-auto"
           to={url.mainGame}
         >
           ゲーム
         </Link>
         <Link
-          className="border py-4 px-8 border-gray-500 w-fit rounded-md mx-auto"
+          className="border py-2 px-4 border-gray-500 w-fit rounded-md mx-auto"
           to={url.quizEntrance}
         >
           クイズ

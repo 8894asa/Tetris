@@ -24,6 +24,7 @@ type TetrisGameHookType = {
   handleRotate: (rotation: number) => void;
   handleMove: (distance: number) => void;
   handleHardDrop: () => void;
+  handleHold: () => void;
 };
 
 const getMinoPositions = (mino: Tetrimino): Position[] => {
@@ -157,6 +158,7 @@ export function useTetrisGame(
   },
   option?: {
     judgeClear?: (field: FieldBlock[][]) => boolean;
+    handleClear?: () => void;
     judgeFailed?: (nextMinoList: MinoType[], field: FieldBlock[][]) => boolean;
   },
 ): TetrisGameHookType {
@@ -177,32 +179,6 @@ export function useTetrisGame(
   const location = useLocation();
   // 解説ページかどうか
   const isExplainPage = location.search === "?explain";
-
-  const getNextMino = (): CurrentMino => {
-    // nextMinoListに追加するMinoTypeを抽選
-    const additionalType =
-      minoListRef.current[
-        Math.floor(Math.random() * minoListRef.current.length)
-      ];
-    if (minoListRef.current.length === 1) {
-      setMinoTypeList(minoTypes.concat());
-    } else {
-      setMinoTypeList(
-        minoListRef.current.filter((mino) => mino !== additionalType),
-      );
-    }
-
-    const nextType = nextMinoListRef.current[0];
-
-    setNextMinoList([...nextMinoListRef.current.slice(1), additionalType]);
-
-    return {
-      type: nextType,
-      position: getInitialPosition(nextType),
-      rotation: 0,
-      hasHold: false,
-    };
-  };
 
   const [currentMino, setCurrentMino] = useState<CurrentMino>(() => {
     const type = "I";
@@ -265,6 +241,7 @@ export function useTetrisGame(
       if (isClear) {
         alert("clear!");
         setIsClear(false);
+        option?.handleClear?.();
         setInitValue();
         return;
       }
@@ -449,7 +426,12 @@ export function useTetrisGame(
     if (!minoRef.current.hasHold) {
       if (holdMinoRef.current == null) {
         setHoldMino({ ...minoRef.current, rotation: 0 });
-        setCurrentMino(getNextMino());
+
+        const { newCurrentMino, newMinoTypeList, newNextMinoList } =
+          getNextLists(minoListRef.current, nextMinoListRef.current);
+        setCurrentMino({ ...newCurrentMino, hasHold: false });
+        setMinoTypeList(newMinoTypeList);
+        setNextMinoList(newNextMinoList);
       } else {
         const tmp = minoRef.current;
         setCurrentMino({
@@ -552,5 +534,6 @@ export function useTetrisGame(
     handleRotate,
     handleMove,
     handleHardDrop,
+    handleHold,
   };
 }

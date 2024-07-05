@@ -27,6 +27,7 @@ export type Question = {
   answer: {
     rotate: number;
     move: number;
+    isHold?: boolean;
   }[];
 };
 
@@ -35,7 +36,7 @@ export const QUESTIONS: Question[] = [
     id: 1,
     turn: 4,
     difficulty: "medium",
-    name: "中クラス問題",
+    name: "中クラス問題1",
     description: "中クラス問題です。",
     initialMinoGrid: [
       [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], // 4行目
@@ -78,15 +79,11 @@ export const QUESTIONS: Question[] = [
       },
       {
         rotate: 0,
-        move: 0,
+        move: 2,
       },
       {
         rotate: 0,
-        move: 0,
-      },
-      {
-        rotate: 0,
-        move: 0,
+        move: -1,
       },
     ],
   },
@@ -94,7 +91,7 @@ export const QUESTIONS: Question[] = [
     id: 3,
     turn: 4,
     difficulty: "medium",
-    name: "中クラス問題",
+    name: "中クラス問題2",
     description: "中クラス問題です。",
     initialMinoGrid: [
       [0, 0, 0, 0, 0, 0, 1, 1, 0, 0], // 4行目
@@ -106,20 +103,20 @@ export const QUESTIONS: Question[] = [
     nextMinoList: ["J", "T", "O"],
     answer: [
       {
-        position: { x: 5, y: 3 },
-        rotation: 1,
+        move: 0,
+        rotate: -1,
       },
       {
-        position: { x: 3, y: 3 },
-        rotation: 1,
+        move: -1,
+        rotate: -1,
       },
       {
-        position: { x: 0, y: 2 },
-        rotation: 0,
+        move: -3,
+        rotate: 2,
       },
       {
-        position: { x: 8, y: 1 },
-        rotation: 0,
+        move: 4,
+        rotate: 0,
       },
     ],
   },
@@ -127,7 +124,7 @@ export const QUESTIONS: Question[] = [
     id: 4,
     turn: 4,
     difficulty: "medium",
-    name: "中クラス問題",
+    name: "中クラス問題3",
     description: "中クラス問題です。",
     initialMinoGrid: [
       [1, 1, 0, 0, 1, 1, 1, 1, 1, 1], // 4行目
@@ -139,20 +136,20 @@ export const QUESTIONS: Question[] = [
     nextMinoList: ["L", "O", "I"],
     answer: [
       {
-        position: { x: 2, y: 3 },
-        rotation: 1,
+        rotate: -1,
+        move: -2,
       },
       {
-        position: { x: 5, y: 2 },
-        rotation: 3,
+        move: 2,
+        rotate: 1,
       },
       {
-        position: { x: 7, y: 1 },
-        rotation: 0,
+        move: 3,
+        rotate: 0,
       },
       {
-        position: { x: 1, y: 0 },
-        rotation: 0,
+        move: -2,
+        rotate: 0,
       },
     ],
   },
@@ -160,7 +157,7 @@ export const QUESTIONS: Question[] = [
     id: 5,
     turn: 5,
     difficulty: "hard",
-    name: "上クラス問題",
+    name: "上クラス問題1",
     description: "高難易度問題です。",
     initialMinoGrid: [
       [0, 0, 0, 0, 0, 0, 0, 1, 1, 1], // 4行目
@@ -171,37 +168,37 @@ export const QUESTIONS: Question[] = [
     currentMinoType: "L",
     nextMinoList: ["Z", "T", "O", "J"],
     answer: [
-      {
-        position: { x: 0, y: 3 },
-        rotation: 3,
-      },
-      {
-        position: { x: 2, y: 3 },
-        rotation: 0,
-      },
-      {
-        position: { x: 4, y: 3 },
-        rotation: 2,
-      },
-      {
-        position: { x: 6, y: 2 },
-        rotation: 0,
-      },
-      {
-        position: { x: 1, y: 4 },
-        rotation: 2,
-      },
-      {
-        position: { x: 3, y: 1 },
-        rotation: 2,
-      },
+      // {
+      //   position: { x: 0, y: 3 },
+      //   rotation: 3,
+      // },
+      // {
+      //   position: { x: 2, y: 3 },
+      //   rotation: 0,
+      // },
+      // {
+      //   position: { x: 4, y: 3 },
+      //   rotation: 2,
+      // },
+      // {
+      //   position: { x: 6, y: 2 },
+      //   rotation: 0,
+      // },
+      // {
+      //   position: { x: 1, y: 4 },
+      //   rotation: 2,
+      // },
+      // {
+      //   position: { x: 3, y: 1 },
+      //   rotation: 2,
+      // },
     ],
   },
   {
     id: 6, // hold 3->4
     turn: 4,
     difficulty: "medium",
-    name: "中クラス問題",
+    name: "中クラス問題4",
     description: "中クラス問題です。",
     initialMinoGrid: [
       [1, 1, 0, 0, 0, 0, 0, 1, 1, 1], // 4行目
@@ -210,29 +207,35 @@ export const QUESTIONS: Question[] = [
       [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], // 1行目
     ],
     currentMinoType: "O",
-    nextMinoList: ["L", "I", "J"],
+    nextMinoList: ["L", "I", "J", "L"],
     answer: [
       {
-        position: { x: 3, y: 3 },
-        rotation: 0,
+        move: -1,
+        rotate: 0,
       },
       {
-        position: { x: 2, y: 2 },
-        rotation: 2,
-      },
-      // hold
-      {
-        position: { x: 0, y: 2 },
-        rotation: 0,
-      },
-      {
-        position: { x: 5, y: 2 },
-        rotation: 1,
+        move: -1,
+        rotate: 2,
       },
       // hold
       {
-        position: { x: 6, y: 0 },
-        rotation: 0,
+        move: 0,
+        rotate: 0,
+        isHold: true,
+      },
+      {
+        move: 1,
+        rotate: -1,
+      },
+      // hold
+      {
+        move: 0,
+        rotate: 0,
+        isHold: true,
+      },
+      {
+        move: 3,
+        rotate: 0,
       },
     ],
   },
@@ -240,7 +243,7 @@ export const QUESTIONS: Question[] = [
     id: 7, // hold 2->3
     turn: 4,
     difficulty: "hard",
-    name: "上クラス問題",
+    name: "上クラス問題2",
     description: "高難易度問題です。",
     initialMinoGrid: [
       [1, 0, 0, 0, 0, 0, 0, 0, 1, 1], // 4行目
@@ -251,28 +254,28 @@ export const QUESTIONS: Question[] = [
     currentMinoType: "T",
     nextMinoList: ["J", "I", "L"],
     answer: [
-      {
-        position: { x: 4, y: 3 },
-        rotation: 0,
-      },
-      // hold
-      {
-        position: { x: 1, y: 2 },
-        rotation: 1,
-      },
-      {
-        position: { x: 0, y: 2 },
-        rotation: 0,
-      },
-      {
-        position: { x: 6, y: 2 },
-        rotation: 3,
-      },
-      // hold
-      {
-        position: { x: 3, y: 1 },
-        rotation: 2,
-      },
+      // {
+      //   position: { x: 4, y: 3 },
+      //   rotation: 0,
+      // },
+      // // hold
+      // {
+      //   position: { x: 1, y: 2 },
+      //   rotation: 1,
+      // },
+      // {
+      //   position: { x: 0, y: 2 },
+      //   rotation: 0,
+      // },
+      // {
+      //   position: { x: 6, y: 2 },
+      //   rotation: 3,
+      // },
+      // // hold
+      // {
+      //   position: { x: 3, y: 1 },
+      //   rotation: 2,
+      // },
     ],
   },
 ];
