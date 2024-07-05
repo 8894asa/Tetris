@@ -20,7 +20,6 @@ type Props = {
 };
 
 export function TetrisQuiz({ question }: Props) {
-  console.log(question);
   const navigate = useNavigate();
   const location = useLocation();
   // 解説ページかどうか
@@ -158,9 +157,9 @@ export function TetrisQuiz({ question }: Props) {
           setTimeout(() => {
             handleHardDrop();
             executeStep(index + 1);
-          }, 1000);
-        }, 1000);
-      }, 2000);
+          }, 750);
+        }, 750);
+      }, 1000);
     };
 
     executeStep(0);
