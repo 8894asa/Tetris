@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
 
 import {
   FieldBlock,
@@ -27,7 +26,7 @@ type TetrisGameHookType = {
   handleHold: () => void;
 };
 
-const getMinoPositions = (mino: Tetrimino): Position[] => {
+export const getMinoPositions = (mino: Tetrimino): Position[] => {
   const rotate = (
     position: Position,
     rotation: number,
@@ -120,7 +119,7 @@ const getMinoPositions = (mino: Tetrimino): Position[] => {
   }
 };
 
-const isStacked = (blocks: Position[], field: FieldBlock[][]): boolean =>
+export const isStacked = (blocks: Position[], field: FieldBlock[][]): boolean =>
   blocks.some((block) => {
     const { x, y } = block;
     return x < 0 || x > 9 || y < 0 || y > 23 || field[y][x].isFilled;
@@ -157,6 +156,7 @@ export function useTetrisGame(
     newNextMinoList: MinoType[];
   },
   option?: {
+    isKeyInvalid?: boolean;
     judgeClear?: (field: FieldBlock[][]) => boolean;
     handleClear?: () => void;
     judgeFailed?: (nextMinoList: MinoType[], field: FieldBlock[][]) => boolean;
@@ -175,10 +175,6 @@ export function useTetrisGame(
   const [nextMinoList, setNextMinoList] = useState<MinoType[]>([]);
   const nextMinoListRef = useRef<MinoType[]>([]);
   nextMinoListRef.current = nextMinoList;
-
-  const location = useLocation();
-  // 解説ページかどうか
-  const isExplainPage = location.search === "?explain";
 
   const [currentMino, setCurrentMino] = useState<CurrentMino>(() => {
     const type = "I";
@@ -213,6 +209,9 @@ export function useTetrisGame(
 
   const [isClear, setIsClear] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
+
+  const isKeyInvalidRef = useRef<boolean>(option?.isKeyInvalid ?? false);
+  isKeyInvalidRef.current = option?.isKeyInvalid ?? false;
 
   const setInitValue = () => {
     const init = initialize();
@@ -488,7 +487,7 @@ export function useTetrisGame(
       // ボタンが押されたときに再度押されるのを防ぐ
       if (buttonDisabled) return;
       // 解説ページだったら無効化
-      if (isExplainPage) return;
+      if (isKeyInvalidRef.current) return;
 
       switch (e.key) {
         case "a":

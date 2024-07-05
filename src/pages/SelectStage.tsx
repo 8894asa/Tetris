@@ -22,7 +22,7 @@ function SelectQuestion({ questions }: { questions: Question[] }) {
               className="border-t hover:cursor-pointer"
               onClick={() => navigate(`${url.tetrisQuiz}/${question.id}`)}
             >
-              <td className="w-64">{question.name}</td>
+              <td className="w-64 py-1">{question.name}</td>
               <td className="w-64">{question.turn}</td>
             </tr>
           ))}

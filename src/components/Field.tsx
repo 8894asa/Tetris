@@ -1,5 +1,4 @@
 /* eslint-disable react/no-array-index-key */
-import { useLocation } from "react-router-dom";
 
 import { Block } from "@/components/Block";
 import { FieldBlock, MinoType, Position } from "@/domains/tetrimino";
@@ -36,20 +35,8 @@ const classNameFromType = (type?: string) => {
 };
 
 export function Field({ field, mino }: Props) {
-  const location = useLocation();
-  // 解説ページかどうか
-  const isExplainPage = location.search === "?explain";
-
   return (
     <div className="flex-col">
-      {isExplainPage && (
-        <p className="text-red-500">
-          ※ 解説モードです。
-          <br />
-          答えの順にミノが落ちていきます。
-        </p>
-      )}
-
       {field
         .slice(0, 20)
         .reverse()
