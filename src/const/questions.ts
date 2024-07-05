@@ -382,4 +382,62 @@ export const QUESTIONS: Question[] = [
       },
     ],
   },
+  {
+    id: 11,
+    turn: 2,
+    difficulty: "easy",
+    name: "簡単な問題3",
+    description: "簡単な問題です",
+    initialMinoGrid: [
+      [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], // 4行目
+      [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 3行目
+      [1, 1, 1, 1, 1, 0, 1, 1, 1, 1], // 2行目
+      [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "L",
+    nextMinoList: ["T"],
+    answer: [
+      { rotate: 1, move: 1 },
+      { rotate: 2, move: 0 },
+    ],
+  },
+  {
+    id: 12,
+    turn: 5,
+    difficulty: "easy",
+    name: "簡単な問題4",
+    description: "簡単な問題です",
+    initialMinoGrid: [], // なし
+    currentMinoType: "O",
+    nextMinoList: ["I", "I", "I", "I"],
+    answer: [
+      { rotate: 0, move: 0 },
+      { rotate: 0, move: -3 },
+      { rotate: 0, move: -3 },
+      { rotate: 0, move: 3 },
+      { rotate: 0, move: 3 },
+    ],
+  },
+
+  {
+    id: 13,
+    turn: 4,
+    difficulty: "medium",
+    name: "ちょいむず",
+    description: "ちょいむずな問題です",
+    initialMinoGrid: [
+      [1, 0, 0, 0, 0, 1, 1, 0, 0, 0], // 4行目
+      [1, 0, 1, 0, 1, 1, 1, 0, 0, 0], // 3行目
+      [1, 0, 1, 1, 1, 1, 1, 0, 1, 1], // 2行目
+      [1, 0, 1, 1, 1, 1, 1, 0, 1, 1], // 1行目
+    ],
+    currentMinoType: "J",
+    nextMinoList: ["J", "T", "I"],
+    answer: [
+      { rotate: -1, move: 3 },
+      { rotate: 2, move: 4 },
+      { rotate: 2, move: -1 },
+      { rotate: 1, move: -3 },
+    ],
+  },
 ];
