@@ -62,7 +62,7 @@ export const QUESTIONS: Question[] = [
     id: 2,
     turn: 3,
     difficulty: "easy",
-    name: "簡単な問題",
+    name: "簡単な問題1",
     description: "初心者でもできる簡単な問題です。",
 
     initialMinoGrid: [
@@ -276,6 +276,110 @@ export const QUESTIONS: Question[] = [
       //   position: { x: 3, y: 1 },
       //   rotation: 2,
       // },
+    ],
+  },
+  {
+    id: 8,
+    turn: 2,
+    difficulty: "easy",
+    name: "簡単な問題2",
+    description: "初心者でもできる簡単な問題です。",
+    initialMinoGrid: [
+      [1, 1, 1, 1, 0, 0, 0, 1, 1, 1], // 3行目
+      [1, 1, 1, 1, 0, 0, 0, 1, 1, 1], // 2行目
+      [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "Z",
+    nextMinoList: ["J"],
+    answer: [
+      {
+        move: 1,
+        rotate: -1,
+      },
+      {
+        move: 0,
+        rotate: -1,
+      },
+    ],
+  },
+  {
+    id: 9,
+    turn: 5,
+    difficulty: "medium",
+    name: "中クラス問題5",
+    description: "中クラス問題です。",
+    initialMinoGrid: [
+      [1, 0, 0, 0, 0, 0, 0, 0, 1, 1], // 5行目
+      [1, 1, 0, 0, 0, 0, 1, 1, 1, 1], // 4行目
+      [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], // 3行目
+      [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], // 2行目
+      [1, 1, 1, 0, 0, 0, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "T",
+    nextMinoList: ["L", "S", "L", "I"],
+    answer: [
+      {
+        move: 0,
+        rotate: 0,
+      },
+      {
+        move: -1,
+        rotate: 1,
+      },
+      {
+        rotate: -1,
+        move: 0,
+      },
+      {
+        move: 2,
+        rotate: 2,
+      },
+      {
+        move: -2,
+        rotate: 0,
+      },
+    ],
+  },
+  {
+    id: 10,
+    difficulty: "medium",
+    turn: 6,
+    name: "中クラス問題6",
+    description: "中クラス問題です。",
+    initialMinoGrid: [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 5行目
+      [0, 0, 0, 0, 0, 0, 1, 1, 1, 1], // 4行目
+      [0, 0, 0, 0, 0, 0, 1, 1, 1, 1], // 3行目
+      [1, 1, 0, 0, 1, 1, 1, 1, 1, 1], // 2行目
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], // 1行目
+    ],
+    currentMinoType: "O",
+    nextMinoList: ["S", "O", "L", "J", "I"],
+    answer: [
+      {
+        move: -2,
+        rotate: 0,
+      },
+      {
+        move: 0,
+        rotate: 1,
+      },
+      {
+        move: -4,
+        rotate: 0,
+      },
+      {
+        move: 1,
+        rotate: 1,
+      },
+      {
+        move: -3,
+        rotate: 2,
+      },
+      {
+        move: 3,
+        rotate: 0,
+      },
     ],
   },
 ];

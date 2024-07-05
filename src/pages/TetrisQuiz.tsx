@@ -20,6 +20,7 @@ type Props = {
 };
 
 export function TetrisQuiz({ question }: Props) {
+  console.log(question);
   const navigate = useNavigate();
   const location = useLocation();
   // 解説ページかどうか
