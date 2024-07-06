@@ -44,13 +44,20 @@ export const QUESTIONS: Question[] = [
       [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 2行目
       [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], // 1行目
     ],
-    currentMinoType: "T",
-    nextMinoList: ["O"],
-    // TODO 後で考える。
+    currentMinoType: "Z",
+    nextMinoList: ["T", "J", "O"],
     answer: [
       {
-        rotate: 1,
-        move: 2,
+        rotate: 0,
+        move: -2,
+      },
+      {
+        rotate: 2,
+        move: 0,
+      },
+      {
+        rotate: -2,
+        move: 3,
       },
       {
         rotate: 0,
@@ -153,7 +160,7 @@ export const QUESTIONS: Question[] = [
       },
     ],
   },
-   {
+  {
     id: 5,
     turn: 5,
     difficulty: "hard",
@@ -248,16 +255,16 @@ export const QUESTIONS: Question[] = [
       [1, 1, 1, 1, 1, 0, 1, 0, 1, 1], // 1行目
     ],
     currentMinoType: "T",
-    nextMinoList: ["J", "I", "L","O"],
+    nextMinoList: ["J", "I", "L", "O"],
     answer: [
-       {
+      {
         move: 1,
         rotate: 0,
       },
       {
         move: 0,
         rotate: 0,
-        isHold: true
+        isHold: true,
       },
       // hold
       {
@@ -271,13 +278,12 @@ export const QUESTIONS: Question[] = [
       {
         move: 0,
         rotate: 0,
-        isHold: true
+        isHold: true,
       },
       {
         move: 0,
         rotate: -2,
       },
-
     ],
   },
   {
