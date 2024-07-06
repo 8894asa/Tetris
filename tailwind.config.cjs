@@ -140,6 +140,9 @@ module.exports = {
         ".action-grey-border": {
           borderColor: "#C9CDD2",
         },
+        ".ghost-class": {
+          opacity: "0.5",
+        },
       };
       addUtilities(newUtilities, ["responsive", "hover"]);
     },

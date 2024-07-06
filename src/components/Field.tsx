@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import { Block } from "@/components/Block";
-import { FieldBlock, MinoType, Position } from "@/domains/tetrimino";
+import { FieldBlock, MinoType, Position, ghostPosition } from "@/domains/tetrimino";
 
 type MinoInField = {
   positions: Position[];
@@ -10,6 +10,7 @@ type MinoInField = {
 type Props = {
   field: FieldBlock[][];
   mino: MinoInField;
+  ghostPosition: ghostPosition[];
 };
 
 const classNameFromType = (type?: string) => {
@@ -33,7 +34,7 @@ const classNameFromType = (type?: string) => {
   }
 };
 
-export function Field({ field, mino }: Props) {
+export function Field({ field, mino, ghostPosition }: Props) {
   return (
     <div className="flex-col">
       {field
@@ -46,6 +47,9 @@ export function Field({ field, mino }: Props) {
                 // reverseしたので19 - position.y
                 (position) => position.x === x && 19 - position.y === y,
               );
+              const isGhostBlock = ghostPosition.some(
+                (pos) => pos.x === x && pos.y === y,
+              );
               if (minoBlock != null) {
                 return (
                   <Block key={x} className={classNameFromType(mino.type)} />
@@ -55,7 +59,11 @@ export function Field({ field, mino }: Props) {
                 <Block
                   key={x}
                   className={
-                    block.isFilled ? classNameFromType(block.type) : ""
+                    isGhostBlock
+                      ? "ghost-class"
+                      : block.isFilled
+                        ? classNameFromType(block.type)
+                        : ""
                   }
                 />
               );

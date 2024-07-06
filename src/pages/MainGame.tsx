@@ -47,7 +47,7 @@ export function MainGame() {
     };
   };
 
-  const { field, currentMino, currentMinoPositions, holdMino, nextMinoList } =
+  const { field, currentMino, currentMinoPositions, holdMino, nextMinoList, ghostPosition,} =
     useTetrisGame(initialize);
 
   return (
@@ -58,6 +58,7 @@ export function MainGame() {
           positions: currentMinoPositions,
           type: currentMino.type,
         }}
+        ghostPosition={}
       />
     </FieldFrame>
   );
