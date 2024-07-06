@@ -1,6 +1,6 @@
 import { Field } from "@/components/Field";
 import { FieldFrame } from "@/components/FieldFrame";
-import { useTetrisGame } from "@/components/TetrisGameHook";
+import { getMinoPositions, useTetrisGame } from "@/components/TetrisGameHook";
 import {
   MinoType,
   Tetrimino,
@@ -82,8 +82,15 @@ export function MainGame() {
     };
   };
 
-  const { field, currentMino, currentMinoPositions, holdMino, nextMinoList } =
-    useTetrisGame(initialize, getNextLists);
+  const {
+    field,
+    currentMino,
+    currentMinoPositions,
+    holdMino,
+    nextMinoList,
+    ghostPosition,
+  } = useTetrisGame(initialize, getNextLists);
+  console.log(ghostPosition);
 
   return (
     <FieldFrame holdMinoType={holdMino?.type} nextMinoList={nextMinoList}>
@@ -91,6 +98,14 @@ export function MainGame() {
         field={field}
         mino={{
           positions: currentMinoPositions,
+          type: currentMino.type,
+        }}
+        ghostMino={{
+          positions: getMinoPositions({
+            position: ghostPosition,
+            rotation: currentMino.rotation,
+            type: currentMino.type,
+          }),
           type: currentMino.type,
         }}
       />

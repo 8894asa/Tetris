@@ -11,6 +11,7 @@ type MinoInField = {
 type Props = {
   field: FieldBlock[][];
   mino: MinoInField;
+  ghostMino: MinoInField;
 };
 
 const classNameFromType = (type?: string) => {
@@ -34,7 +35,7 @@ const classNameFromType = (type?: string) => {
   }
 };
 
-export function Field({ field, mino }: Props) {
+export function Field({ field, mino, ghostMino }: Props) {
   return (
     <div className="flex-col">
       {field
@@ -47,6 +48,9 @@ export function Field({ field, mino }: Props) {
                 // reverseしたので19 - position.y
                 (position) => position.x === x && 19 - position.y === y,
               );
+              const isGhostBlock = ghostMino.positions.some(
+                (position) => position.x === x && 19 - position.y === y,
+              );
               if (minoBlock != null) {
                 return (
                   <Block key={x} className={classNameFromType(mino.type)} />
@@ -55,9 +59,8 @@ export function Field({ field, mino }: Props) {
               return (
                 <Block
                   key={x}
-                  className={
-                    block.isFilled ? classNameFromType(block.type) : ""
-                  }
+                  className={`${isGhostBlock ? `ghost-class ${classNameFromType(ghostMino.type)}` : ""}
+                      ${block.isFilled ? classNameFromType(block.type) : ""}`}
                 />
               );
             })}

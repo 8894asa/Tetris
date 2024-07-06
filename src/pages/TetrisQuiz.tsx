@@ -127,6 +127,7 @@ export function TetrisQuiz({ question }: Props) {
     currentMinoPositions,
     holdMino,
     nextMinoList,
+    ghostPosition,
     handleRotate,
     handleMove,
     handleHardDrop,
@@ -269,6 +270,14 @@ export function TetrisQuiz({ question }: Props) {
         field={field}
         mino={{
           positions: currentMinoPositions,
+          type: currentMino.type,
+        }}
+        ghostMino={{
+          positions: getMinoPositions({
+            position: ghostPosition,
+            rotation: currentMino.rotation,
+            type: currentMino.type,
+          }),
           type: currentMino.type,
         }}
       />
