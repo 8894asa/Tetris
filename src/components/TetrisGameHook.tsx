@@ -19,6 +19,7 @@ type TetrisGameHookType = {
   holdMino: Tetrimino | undefined;
   formerMinos: MinoType[];
   nextMinoList: MinoType[];
+  ghostPosition: Position;
   setCurrentMino: (mino: CurrentMino) => void;
   handleRotate: (rotation: number) => void;
   handleMove: (distance: number) => void;
@@ -137,6 +138,19 @@ const canRotate = (
   return !isStacked(rotatedBlocks, field);
 };
 
+const getGhostPosition = (
+  mino: CurrentMino,
+  field: FieldBlock[][],
+): Position => {
+  const ghostPosition = { ...mino.position };
+  while (
+    !isStacked(getMinoPositions({ ...mino, position: ghostPosition }), field)
+  ) {
+    ghostPosition.y -= 1; // Move the ghost piece down until it collides
+  }
+  return { ...ghostPosition, y: ghostPosition.y + 1 }; // Move back up one step to the last valid position
+};
+
 export function useTetrisGame(
   initialize: () => {
     field: FieldBlock[][];
@@ -198,6 +212,14 @@ export function useTetrisGame(
   const [field, setField] = useState(newEmptyField());
   const fieldRef = useRef<FieldBlock[][]>(null!);
   fieldRef.current = field;
+
+  const [ghostPosition, setGhostPosition] = useState<Position>(
+    currentMino.position,
+  );
+
+  useEffect(() => {
+    setGhostPosition(getGhostPosition(currentMino, fieldRef.current));
+  }, [currentMino, fieldRef.current]);
 
   const formerFields = useRef<FieldBlock[][][]>([]);
 
@@ -529,6 +551,7 @@ export function useTetrisGame(
     holdMino,
     formerMinos,
     nextMinoList,
+    ghostPosition,
     setCurrentMino,
     handleRotate,
     handleMove,

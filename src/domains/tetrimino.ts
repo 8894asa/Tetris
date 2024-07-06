@@ -60,3 +60,8 @@ export const getInitialPosition = (type: MinoType): Position => {
       return { x: 4, y: 21 };
   }
 };
+
+export type ghostPosition = {
+  x: number;
+  y: number;
+}
