@@ -181,25 +181,28 @@ export function TetrisQuiz({ question }: Props) {
 
   const handleHint = () => {
     if (isExplainPage) return;
+    if (isHintRef.current) return;
     const index = question.answer.length - nextMinoList.length - 1;
     let removedField = newField(getFieldData());
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < index; i++) {
       const { rotate, move } = question.answer[i];
+      const type =
+        i === 0 ? question.currentMinoType : question.nextMinoList[i - 1];
       const mino: Tetrimino = {
-        type: i === 0 ? question.currentMinoType : question.nextMinoList[i - 1],
+        type,
         position: {
-          ...getInitialPosition(
-            i === 0 ? question.currentMinoType : question.nextMinoList[i - 1],
-          ),
+          ...getInitialPosition(type),
         },
         rotation: rotate,
       };
       mino.position.x += move;
-      while (!isStacked(getMinoPositions(mino), field)) {
+      while (!isStacked(getMinoPositions(mino), removedField)) {
         // eslint-disable-next-line no-plusplus
         mino.position.y--;
       }
+      // eslint-disable-next-line no-plusplus
+      mino.position.y++;
 
       // フィールド上のブロックにminoを加える
       const putField = removedField.map((row, y) =>
@@ -240,7 +243,11 @@ export function TetrisQuiz({ question }: Props) {
       }
       handleRotate(rotate);
       setTimeout(() => {
-        handleMove(move);
+        handleMove(
+          getInitialPosition(currentMino.type).x +
+            move -
+            currentMino.position.x,
+        );
         setTimeout(() => {
           handleHardDrop();
           isHintRef.current = false;
