@@ -141,52 +141,82 @@ export function TetrisQuiz({ question }: Props) {
 
   // 【解説機能】 2秒後に回転し、その2秒後とさらにその2秒後にハードドロップ
   useEffect(() => {
-    if (!isExplainPage) return () => {};
+    (async () => {
+      if (!isExplainPage) return () => {};
 
-    const executeStep = (index: number) => {
-      if (index >= question.answer.length) {
-        // 全てのステップが完了した後に2秒の遅延を追加
-        setTimeout(() => {
-          // 次の配列の処理をここに追加
-        }, 2000);
-        return;
-      }
-
-      const { rotate, move, isHold } = question.answer[index];
-
-      // 2秒間隔で回転し、その1秒後に移動し、その1秒後にハードドロップ
-      setTimeout(() => {
-        if (isHold ?? false) {
-          handleHold();
-          executeStep(index + 1);
+      const executeStep = async (index: number) => {
+        if (index >= question.answer.length) {
+          // 全てのステップが完了した後に2秒の遅延を追加
+          setTimeout(() => {
+            // 次の配列の処理をここに追加
+          }, 2000);
           return;
         }
-        handleRotate(rotate);
-        setTimeout(() => {
-          handleMove(move);
-          setTimeout(() => {
-            handleHardDrop();
-            executeStep(index + 1);
-          }, 750);
-        }, 750);
-      }, 1000);
-    };
 
-    executeStep(0);
+        const { rotate, move, isHold } = question.answer[index];
 
-    return () => {
-      // 全てのタイマーをクリア
-      question.answer.forEach((_, index) => clearTimeout(index * 2000));
-    };
+        const asyncHardDrop = async () =>
+          new Promise(() => {
+            setTimeout(() => {
+              handleHardDrop();
+              executeStep(index + 1);
+            }, 750);
+          });
+
+        const asyncMove = async () =>
+          new Promise(() => {
+            setTimeout(async () => {
+              handleMove(move);
+              await asyncHardDrop();
+            }, 750);
+          });
+
+        const asyncRotate = async () =>
+          new Promise(() => {
+            setTimeout(async () => {
+              if (isHold ?? false) {
+                handleHold();
+                executeStep(index + 1);
+                return;
+              }
+              handleRotate(rotate);
+              await asyncMove();
+            }, 750);
+          });
+
+        // 2秒間隔で回転し、その1秒後に移動し、その1秒後にハードドロップ
+        await asyncRotate();
+      };
+
+      await executeStep(0);
+
+      return () => {
+        // 全てのタイマーをクリア
+        question.answer.forEach((_, index) => clearTimeout(index * 2000));
+      };
+    })();
   }, []);
 
   const handleHint = () => {
     if (isExplainPage) return;
     if (isHintRef.current) return;
-    const index = question.answer.length - nextMinoList.length - 1;
+    const holdCorrection =
+      question.answer.filter((answer) => answer.isHold).length - 1;
+    const index =
+      question.answer.length - nextMinoList.length - holdCorrection - 1;
+
+    if ((question.answer[index].isHold ?? false) && !currentMino.hasHold) {
+      handleHold();
+      return;
+    }
+
     let removedField = newField(getFieldData());
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < index; i++) {
+      if (question.answer[i].isHold ?? false) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
       const { rotate, move } = question.answer[i];
       const type =
         i === 0 ? question.currentMinoType : question.nextMinoList[i - 1];
